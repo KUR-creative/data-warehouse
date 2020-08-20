@@ -2,12 +2,10 @@ import itertools as I
 from pathlib import Path
 
 import cv2
-import funcy as F
 from funcy import memoize
 import imagesize
 
 from utils import fp
-from utils import file_utils as fu
 from utils.etc_utils import factors, modulo_pad
 
 

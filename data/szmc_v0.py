@@ -3,11 +3,12 @@ from pathlib import Path
 
 import cv2
 
-import tasks
+from tasks import gen_crops
 from utils import file_utils as fu
 
 
-def gen_crops(root, h, w): # TODO: refactor
+#---------------------------------------------------------------
+def save_crops(root, h, w): # TODO: refactor
     # Get src images
     org_dir = Path(root, 'prev_images') 
     mask_dir = Path(root, 'mask1bit')
@@ -23,8 +24,7 @@ def _gen_crops(root, img_dir, h, w, dst_dir=None):
     
     # Generate (path, crop)s
     paths = fu.human_sorted(fu.descendants(img_dir))
-    path_crop_seq = tasks.gen_crops.do(
-        paths, h, w, dst_crops_dir)
+    path_crop_seq = gen_crops.do(paths, h, w, dst_crops_dir)
     
     # look & feel check
     '''
@@ -38,8 +38,11 @@ def _gen_crops(root, img_dir, h, w, dst_dir=None):
     
     # Save to dst directories
     os.makedirs(dst_crops_dir, exist_ok=True)
+    # TODO: makedirs parents.. preserve directory structure.
     
     print(f'start: _gen_crops({root}, {img_dir}, {h}, {w}, {dst_dir})')
     for path, crop in path_crop_seq:
         cv2.imwrite(path, cv2.cvtColor(crop, cv2.COLOR_RGB2BGR))
     print('finished')
+
+#---------------------------------------------------------------
