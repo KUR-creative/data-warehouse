@@ -14,14 +14,15 @@ from utils.etc_utils import factors, modulo_pad
 def do(img_paths, crop_h, crop_w, crop_dir):
     ''' crop_dir is directory path to save generated crops. '''
     # Make [(fname, extension)]
-    stem_ext_lst = [(p.stem, p.suffix) for p in map(Path,paths)]
+    stem_ext_lst = (
+        (p.stem, p.suffix) for p in map(Path, img_paths))
     # Make <img> img sequence 
     imgseq = (cv2.cvtColor(cv2.imread(p), cv2.COLOR_BGR2RGB)
-              for p in paths) # TODO: rgba?
+              for p in img_paths) # TODO: rgba?
     # Make [[(y,x)]] # TODO: refactor to core.crops(h,w,ch,cw)?
-    ws, hs = fp.unzip(imagesize.get(p) for p in paths)
-    hs = [h + _modulo_pad(crop_h, h) for h in hs]
-    ws = [w + _modulo_pad(crop_w, w) for w in ws]
+    ws, hs = fp.unzip(imagesize.get(p) for p in img_paths)
+    hs = (h + _modulo_pad(crop_h, h) for h in hs)
+    ws = (w + _modulo_pad(crop_w, w) for w in ws)
     ys_seq = (list(_factors(crop_h, h)) for h in hs)
     xs_seq = (list(_factors(crop_w, w)) for w in ws)
     yxs_lst = fp.lmap(fp.pipe(I.product, list), ys_seq, xs_seq)
@@ -29,8 +30,8 @@ def do(img_paths, crop_h, crop_w, crop_dir):
     # Make [(path, crop)]
     def crop_paths(stem_ext, yxs):
         stem, ext = stem_ext
-        return [str(Path(crop_dir, f'{stem}_y{y}x{x}{ext}'))
-                for y, x in yxs]
+        return (str(Path(crop_dir, f'{stem}_y{y}x{x}{ext}'))
+                for y, x in yxs)
     def cropseq(img, yxs):
         return (img[y:y+crop_h, x:x+crop_w] for y,x in yxs)
     path_crop_pairseq = zip(
@@ -38,7 +39,7 @@ def do(img_paths, crop_h, crop_w, crop_dir):
         fp.mapcat(cropseq, imgseq, yxs_lst))
     
     # look & feel check
-    #for path, crop in path_crop_pairseq: print(crop.shape); cv2.imshow('c',crop); cv2.waitKey(0)
+    #for path, crop in path_crop_pairseq: print(path); print(crop.shape); cv2.imshow('c',crop); cv2.waitKey(0)
     return path_crop_pairseq
 
 #--------------------------------------------------------------
