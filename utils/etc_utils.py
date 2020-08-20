@@ -1,18 +1,33 @@
 import funcy as F
 
-def modulo_pad(x, m):
+def modulo_pad(m, x=None):
     ''' 2a = x + modulo_pad (mod m), where a < x < 2a '''
-    return (m - (x % m)) % m
+    return((m - (x % m)) % m if x is not None
+      else lambda x: modulo_pad(x))
 
-def factorseq(y, d):
+def factorseq(d, y=None):
     ''' Generate factor sequence: 0, d, 2d, ..., y - d '''
-    assert y % d == 0
+    if y is None:
+        return lambda y: factorseq(d, y)
+    else:
+        assert y % d == 0
+        def acc():
+            beg = 0
+            max = y
+            while beg != max:
+                yield beg
+                beg += d
+        return acc()
+    # Note: When just use naive generator, it raises TypeError.
+    #
+    #ex) 
+    # list(map(factorseq(4), [12,20,32]))
+    # TypeError: 'generator' object is not callable
+    #
+    # So I wrapped it up with inner funtion.
     
-    beg = 0
-    max = y
-    while beg != max:
-        yield beg
-        beg += d
+def factors(d, y=None): # for memoization
+    return list(factorseq(d,y))
         
 def partition(y, size):
     ''' 
