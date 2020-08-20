@@ -9,6 +9,15 @@ root = '../SZMC_DATA/v0data/m101/DATA'
 #szmc_v0.gen_crops(root, 512, 512)
 #szmc_v0.save_crops(root, 256, 256)
 
+
+'''
+import yaml
+with open('../SZMC_DATA/v0data/m101/RELS/has_text.manual.1_1000.yml') as f:
+    dic = yaml.load(f)
+print(dic.keys())
+print(dic['RELATIONS'])
+exit()
+'''
 from pathlib import Path
 szmc_v0.annotate_has_text(str(Path(root, 'prev_images')),
                           str(Path(root, 'mask1bit')), 256, 256)

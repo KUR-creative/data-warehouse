@@ -184,6 +184,7 @@ def pub_attrs(obj):
     return attrs(obj, pub_attr_names)
 
 def prop(p, obj=None):
+    # list and int case?
     return(getattr(obj, p) if (isinstance(obj,tuple) and 
                                isinstance(p,str))
       else obj[p] if hasattr(obj,'__getitem__')
