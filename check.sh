@@ -1,3 +1,3 @@
-autoflake --remove-all-unused-imports -r --in-place --exclude ./dw/util/fp.py . 
+autoflake --remove-all-unused-imports -r --in-place --exclude ./utils/fp.py . 
 mypy 
 pyflakes .
