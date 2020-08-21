@@ -130,7 +130,8 @@ def _annotate_text_ox_img_mask_pairs(
     'NAME': {
         'has_text': '텍스트 존재성에 관한 데이터',
         'auto': '자동으로 생성한 데이터(어노테이션)',
-        f'{revision}_{rel_size}': 'revision 개정 버전과 규모(관계 수)'},
+        f'{revision}_{rel_size}': 'revision 개정 버전과 규모(관계 수)',
+        f'h{h}w{w}': '생성에 사용한 crop 사이즈'},
     'DESCRIPTION': {
         'WHAT': 'szmc v0의 이미지-마스크 쌍을 이용하여 생성한 crop에 대해, 자동으로 생성한 텍스트 존재성(o/x) 어노테이션',
         'WHY': '만화 이미지의 텍스트 존재성 분류 학습을 위해서 생성함',
@@ -145,7 +146,7 @@ def _annotate_text_ox_img_mask_pairs(
         'num_no_text': len(fp.lremove(fp.identity, has_texts))},
     'RELATIONS': {f'img_path.text_ox.h{h}w{w}': img_tfs}}
 
-    rel_name = f'has_text.auto.{revision}_{rel_size}.yml'
+    rel_name = f'has_text.auto.{revision}_{rel_size}.h{h}w{w}.yml'
     Path(rels_dir, rel_name).write_text(
         yaml.dump(rel_dic, allow_unicode=True))
 
