@@ -81,9 +81,6 @@ def _gen_crops(DATA_dir, img_dir, h, w, dst_crops_dir=None):
         cv2.imwrite(path, cv2.cvtColor(crop, cv2.COLOR_RGB2BGR))
     print('finished')
 
-def is_relation(dic):
-    return True
-    
 def _annotate_text_ox_img_mask_pairs(
         org_paths, mask_paths, data_source, no_text_threshold,
         h=None, w=None):

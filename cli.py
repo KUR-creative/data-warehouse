@@ -5,12 +5,19 @@ import sys
 import yaml
 
 
+def check_and_write_log(logging, data_source):
+    ''' Convenient helper function. '''
+    if logging:
+        write_log(Path(data_source, 'META', 'log.yml'), sys.argv)
+        
 def write_log(log_path, content):
     ''' Append or create content to log. content is just py obj. '''
     mode = 'a' if Path(log_path).exists() else 'w'
     with open(log_path, mode) as log:
         log.write('- ')
-        log.write(yaml.dump(content, default_flow_style=True))
+        log.write(yaml.dump(content,
+                            allow_unicode=True,
+                            default_flow_style=True))
 
 class data(object):
     ''' Add data to data-sources '''
@@ -34,19 +41,18 @@ class data(object):
         note: 이 작업에 대한 추가적인 설명.
         logging: False일 경우 로깅하지 않음
         '''
+        assert Path(data_source).is_absolute()
         m = import_module(f'data.{module}', 'data')
         m.generate_crops(data_source, crop_h, crop_w)
-
-        if logging:
-            write_log(Path(data_source, 'META', 'log.yml'),
-                      sys.argv)
+        check_and_write_log(logging, data_source)
+            
     @staticmethod
     def annotate_text_ox(module, data_source, crop_h, crop_w,
                          note=None, logging=True):
+        assert Path(data_source).is_absolute()
         m = import_module(f'data.{module}', 'data')
         m.annotate_text_ox(data_source, crop_h, crop_w)
-
-        
+        check_and_write_log(logging, data_source)
 
 #----------------------------------------------------------------
 class interface(object):
