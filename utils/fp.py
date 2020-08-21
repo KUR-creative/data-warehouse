@@ -42,11 +42,6 @@ def take(n, seq=None):
     return F.take(n,seq) if not is_empty(seq) \
     else lambda xs: F.take(n,xs)
 
-import random
-def inplace_shuffled(li):
-    random.shuffle(li)
-    return li
-
 def lzip(*seqs):
     return list(zip(*seqs))
 def unzip(seq):
