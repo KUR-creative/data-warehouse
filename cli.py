@@ -49,6 +49,22 @@ class data(object):
     @staticmethod
     def annotate_text_ox(module, data_source, crop_h, crop_w,
                          note=None, logging=True):
+        '''
+        텍스트 존재성 어노테이션 데이터(관계) 생성
+        
+        데이터 소스(DATA_SOURCE)와 CROP_H, CROP_W를 이용하여
+        어노테이션을 할 crop 이미지들을 결정한다. 이후 MODULE에 정의된 
+        방식으로 자동적으로 어노테이션을 생성하고, DATA_SOURCE/RELS 아래에
+        저장한다.(저장 파일 이름 또한 MODULE에서 결정)
+        
+        args:
+        module: data load/proces/save를 정의하는 dw.data 패키지의 모듈.
+        data_source: 처리하려는 데이터 소스의 경로.
+        crop_h: crop의 height. DATA_SOURCE와 함께 crop 이미지가 있는 폴더를 결정함.
+        crop_w: crop의 width. DATA_SOURCE와 함께 crop 이미지가 있는 폴더를 결정함.
+        note: 이 작업에 대한 추가적인 설명.
+        logging: False일 경우 로깅하지 않음
+        '''
         assert Path(data_source).is_absolute()
         m = import_module(f'data.{module}', 'data')
         m.annotate_text_ox(data_source, crop_h, crop_w)
