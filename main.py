@@ -12,9 +12,11 @@ root = '../SZMC_DATA/v0data/m101/DATA'
 
 '''
 import yaml
-with open('../SZMC_DATA/v0data/m101/RELS/has_text.manual.1_1000.yml') as f:
+with open('../SZMC_DATA/v0data/m101/META/log.ymls') as f:
     dic = yaml.load(f)
-print(dic.keys())
+from pprint import pprint
+pprint(dic)
+
 print(dic['RELATIONS'])
 exit()
 
@@ -22,7 +24,6 @@ from pathlib import Path
 szmc_v0.annotate_has_text(str(Path(root, 'prev_images')),
                           str(Path(root, 'mask1bit')), 256, 256)
 '''
-
 import fire
 import cli
 if __name__ == '__main__':
