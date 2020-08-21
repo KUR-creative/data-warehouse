@@ -9,8 +9,9 @@ from utils import file_utils as fu, fp
 
 
 #---------------------------------------------------------------
-def save_crops(DATA_dir, h, w): # TODO: refactor
+def generate_crops(data_source, h, w): # TODO: refactor
     # Get src images
+    DATA_dir = Path(data_source, 'DATA')
     org_dir = Path(DATA_dir, 'prev_images') 
     mask_dir = Path(DATA_dir, 'mask1bit')
     _gen_crops(DATA_dir, org_dir, h, w)
@@ -104,12 +105,19 @@ def manual_has_text_annotation1000_from_m101_h256w256(iseq, mseq):
     '''
         
 #---------------------------------------------------------------
-def _gen_crops(root, img_dir, h, w, dst_dir=None):
+def _gen_crops(DATA_dir, img_dir, h, w, dst_crops_dir=None):
+    '''
+    DATA_dir: 데이터 소스의 DATA 디렉토리 경로
+    img_dir: 자르려는 이미지가 존재하는 디렉토리의 경로
+    h, w: 잘려져 나오는 crop의 크기
+    dst_crops_dir: crop이 저장되는 디렉토리 경로
+    '''
     # Get src images
     assert img_dir.exists()
     
-    crop_dir = Path(root, 'crop')
-    dst_crops_dir = crop_dir / f'{img_dir.stem}.h{h}w{w}'
+    if dst_crops_dir is None:
+        dst_crops_dir = Path(
+            DATA_dir, 'crop', f'{img_dir.stem}.h{h}w{w}')
     
     # Generate (path, crop)s
     paths = fu.human_sorted(fu.descendants(img_dir))
@@ -129,7 +137,7 @@ def _gen_crops(root, img_dir, h, w, dst_dir=None):
     os.makedirs(dst_crops_dir, exist_ok=True)
     # TODO: makedirs parents.. preserve directory structure.
     
-    print(f'start: _gen_crops({root}, {img_dir}, {h}, {w}, {dst_dir})')
+    print(f'start: _gen_crops({DATA_dir}, {img_dir}, {h}, {w}, {dst_crops_dir})')
     for path, crop in path_crop_seq:
         cv2.imwrite(path, cv2.cvtColor(crop, cv2.COLOR_RGB2BGR))
     print('finished')

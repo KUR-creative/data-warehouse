@@ -17,7 +17,13 @@ with open('../SZMC_DATA/v0data/m101/RELS/has_text.manual.1_1000.yml') as f:
 print(dic.keys())
 print(dic['RELATIONS'])
 exit()
-'''
+
 from pathlib import Path
 szmc_v0.annotate_has_text(str(Path(root, 'prev_images')),
                           str(Path(root, 'mask1bit')), 256, 256)
+'''
+
+import fire
+import cli
+if __name__ == '__main__':
+    fire.Fire(cli.interface)
