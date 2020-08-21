@@ -34,12 +34,19 @@ class data(object):
         note: 이 작업에 대한 추가적인 설명.
         logging: False일 경우 로깅하지 않음
         '''
-        loaded_module = import_module(f'data.{module}', 'data')
-        loaded_module.generate_crops(data_source, crop_h, crop_w)
+        m = import_module(f'data.{module}', 'data')
+        m.generate_crops(data_source, crop_h, crop_w)
 
         if logging:
             write_log(Path(data_source, 'META', 'log.yml'),
                       sys.argv)
+    @staticmethod
+    def annotate_text_ox(module, data_source, crop_h, crop_w,
+                         note=None, logging=True):
+        m = import_module(f'data.{module}', 'data')
+        m.annotate_text_ox(data_source, crop_h, crop_w)
+
+        
 
 #----------------------------------------------------------------
 class interface(object):
