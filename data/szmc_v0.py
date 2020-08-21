@@ -3,6 +3,7 @@ from pathlib import Path
 
 import cv2
 import imagesize
+import yaml
 
 from tasks import gen_crops
 from utils import file_utils as fu, fp
@@ -19,8 +20,10 @@ def generate_crops(data_source, h, w): # TODO: refactor
 
 def annotate_text_ox(data_source, h=None, w=None):
     ''' If h,w is passed, Use cropped directories. '''
-    org_dir = Path(org_dir); mask_dir = Path(mask_dir)
+    
     assert (h is None and w is None) or (h > 0 and w > 0)
+    org_dir = Path(data_source, 'DATA', 'prev_images') 
+    mask_dir = Path(data_source, 'DATA', 'mask1bit')
 
     # Get cropped paths (TODO: would be extracted as a function)
     if h is not None and w is not None:
@@ -28,12 +31,17 @@ def annotate_text_ox(data_source, h=None, w=None):
         mask_stem = mask_dir.stem + f'.h{h}w{w}'
         org_dir = org_dir.parent / 'crop' / org_stem
         mask_dir = mask_dir.parent / 'crop' / mask_stem
-    assert org_dir.exists(), org_dir
-    assert mask_dir.exists(), mask_dir
+    assert org_dir.exists(), f'{org_dir} is not exists.'
+    assert mask_dir.exists(), f'{mask_dir} is not exists.'
+    
+    org_paths = fu.human_sorted(fu.descendants(org_dir))
+    mask_paths = fu.human_sorted(fu.descendants(mask_dir))
+    assert len(org_paths) == len(mask_paths)
     
     threshold_8bit_rgb_mask = 333500
-    _annotate_text_ox_img_mask_lst(
-        org_dir, mask_dir, threshold_8bit_rgb_mask, h, w)
+    _annotate_text_ox_img_mask_pairs(
+        org_paths, mask_paths, data_source,
+        threshold_8bit_rgb_mask, h, w)
     
 #---------------------------------------------------------------
 def _gen_crops(DATA_dir, img_dir, h, w, dst_crops_dir=None):
@@ -73,12 +81,19 @@ def _gen_crops(DATA_dir, img_dir, h, w, dst_crops_dir=None):
         cv2.imwrite(path, cv2.cvtColor(crop, cv2.COLOR_RGB2BGR))
     print('finished')
 
-def _annotate_text_ox(org_dir, mask_dir, threshold,
-                      h=None, w=None):
-    ''' If h,w is passed, Use only (h,w) sized crops. '''
-    org_paths = fu.human_sorted(fu.descendants(org_dir))
-    mask_paths = fu.human_sorted(fu.descendants(mask_dir))
+def is_relation(dic):
+    return True
+    
+def _annotate_text_ox_img_mask_pairs(
+        org_paths, mask_paths, data_source, no_text_threshold,
+        h=None, w=None):
+    ''' 
+    If h,w is passed, Use only (h,w) sized crops. 
+    If mask.sum() > no_text_threshold, then mask has text.
+    '''
     assert len(org_paths) == len(mask_paths)
+    rels_dir = Path(data_source, 'RELS')
+    assert rels_dir.exists()
     
     # Use only (h,w) sized crops.
     def is_hw_size(path):
@@ -87,17 +102,57 @@ def _annotate_text_ox(org_dir, mask_dir, threshold,
             return img_w == w and img_h == h
         else:
             return True # Use all.
-    org_crop_paths = fp.lfilter(is_hw_size, org_paths)
+    org_crop_paths = fp.filter(is_hw_size, org_paths)
     mask_crop_paths = fp.lfilter(is_hw_size, mask_paths)
-    #for o,m in zip(org_crop_paths, mask_crop_paths): print(o,m)
+        
+    # Save relative path
+    org_rel_paths = (str(Path(p).relative_to(data_source))
+                     for p in org_crop_paths)
     
     # Map mask_seq to has-text? (T/F)
     mask_seq = (cv2.cvtColor(cv2.imread(p), cv2.COLOR_BGR2RGB)
                 for p in mask_crop_paths) # TODO: rgba?
-    # Zip with org_crop_paths
-    # Save to has_text.auto.1_{len(paths)}.yml
+    has_texts = [bool(m.sum() > no_text_threshold)
+                 for m in mask_seq]
+    img_tfs = [[p,b] for p,b in zip(org_rel_paths, has_texts)]
+    
+    # look & feel check
+    '''
+    from utils import etc_utils as etc
+    for ip, has_text in etc.inplace_shuffled(list(img_tfs)):
+        print('has-text:', has_text)
+        cv2.imshow(
+            'i', cv2.cvtColor(cv2.imread(ip), cv2.COLOR_BGR2RGB))
+        cv2.waitKey(0)
+    '''
+    
+    # Save to has_text.auto.1_{len(paths)}.yml #TODO: Refactor
+    revision = 1
+    rel_size = len(img_tfs)
+    rel_dic = {
+    'NAME': {
+        'has_text': '텍스트 존재성에 관한 데이터',
+        'auto': '자동으로 생성한 데이터(어노테이션)',
+        f'{revision}_{rel_size}': 'revision 개정 버전과 규모(관계 수)'},
+    'DESCRIPTION': {
+        'WHAT': 'szmc v0의 이미지-마스크 쌍을 이용하여 생성한 crop에 대해, 자동으로 생성한 텍스트 존재성(o/x) 어노테이션',
+        'WHY': '만화 이미지의 텍스트 존재성 분류 학습을 위해서 생성함',
+        'KNWON_ERRORS':
+        ( '이 데이터로 학습 가능한 예상되는 최고 정확도는 0.978임.'
+        + ' has_text.manual.1_1000에서 생성한 GT를 쓰기 때문.')},
+    'HOW_TO_GEN': {
+        f'img_path.text_ox.h{h}w{w}':
+        f'python main.py data annotate_text_ox szmc_v0 DATA_SRC {h} {w}'},
+    'special_values': {
+        'num_has_text': len(fp.lfilter(fp.identity, has_texts)),
+        'num_no_text': len(fp.lremove(fp.identity, has_texts))},
+    'RELATIONS': {f'img_path.text_ox.h{h}w{w}': img_tfs}}
 
-    # code for experiments. 
+    rel_name = f'has_text.auto.{revision}_{rel_size}.yml'
+    Path(rels_dir, rel_name).write_text(
+        yaml.dump(rel_dic, allow_unicode=True))
+
+    # code for manual annotation and experiments. 
     #img_seq = (cv2.cvtColor(cv2.imread(p), cv2.COLOR_BGR2RGB) for p in org_crop_paths) # TODO: rgba?
     # __manual_has_text_annotation1000_from_m101_h256w256(img_seeq, mask_seq)
         
