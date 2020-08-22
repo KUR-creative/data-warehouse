@@ -24,16 +24,21 @@ from pathlib import Path
 szmc_v0.annotate_has_text(str(Path(root, 'prev_images')),
                           str(Path(root, 'mask1bit')), 256, 256)
 
-from dataset import img_text_ox
-#img_text_ox.generate('random_select', 1,2,3)
+'''
 m101 = '/home/kur/dev/szmc/SZMC_DATA/v0data/m101/'
 school = '/home/kur/dev/szmc/SZMC_DATA/v0data/school/'
 
 from pathlib import Path
-Path(m101, 'RELS', 'has_text.auto.
+
+from dataset import img_text_ox
+img_text_ox.generate(
+    'random_select', (5,2,1), 'text_ox.auto.h256w256.v1.yml',
+    m101, school)
+
 '''
 
 import fire
 import cli
 if __name__ == '__main__':
     fire.Fire(cli.interface)
+'''
