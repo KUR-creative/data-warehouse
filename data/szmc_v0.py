@@ -124,13 +124,13 @@ def _annotate_text_ox_img_mask_pairs(
     '''
     
     # Save to has_text.auto.1_{len(paths)}.yml #TODO: Refactor
-    revision = 1
+    version = 1
     rel_size = len(img_tfs)
     rel_dic = {
     'NAME': {
-        'has_text': '텍스트 존재성에 관한 데이터',
+        'text_ox': '텍스트 존재성에 관한 데이터',
         'auto': '자동으로 생성한 데이터(어노테이션)',
-        f'{revision}_{rel_size}': 'revision 개정 버전과 규모(관계 수)',
+        #f'{version}_{rel_size}': 'version 개정 버전과 규모(관계 수)',
         f'h{h}w{w}': '생성에 사용한 crop 사이즈'},
     'DESCRIPTION': {
         'WHAT': 'szmc v0의 이미지-마스크 쌍을 이용하여 생성한 crop에 대해, 자동으로 생성한 텍스트 존재성(o/x) 어노테이션',
@@ -140,13 +140,14 @@ def _annotate_text_ox_img_mask_pairs(
         + ' has_text.manual.1_1000에서 생성한 GT를 쓰기 때문.')},
     'HOW_TO_GEN': {
         f'img_path.text_ox.h{h}w{w}':
-        f'python main.py data annotate_text_ox szmc_v0 DATA_SRC {h} {w}'},
+        (f'python main.py data annotate_text_ox szmc_v0 DATA_SRC {h} {w}'
+        + '# crop된 이미지 중에서 (h,w) 크기가 아닌 이미지는 제외됨.')},
     'special_values': {
         'num_has_text': len(fp.lfilter(fp.identity, has_texts)),
         'num_no_text': len(fp.lremove(fp.identity, has_texts))},
     'RELATIONS': {f'img_path.text_ox.h{h}w{w}': img_tfs}}
 
-    rel_name = f'has_text.auto.{revision}_{rel_size}.h{h}w{w}.yml'
+    rel_name = f'text_ox.auto.h{h}w{w}.v{version}.yml'
     Path(rels_dir, rel_name).write_text(
         yaml.dump(rel_dic, allow_unicode=True))
 
