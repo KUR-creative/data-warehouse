@@ -115,6 +115,8 @@ def walk_keys(f, coll=None):
     return F.walk_keys(f, coll) if not is_empty(coll) \
     else lambda coll: F.walk_keys(f, coll)
 
+from funcy import merge
+
 #---------------------------------------------------------------
 from funcy import repeat, repeatedly
 def lrepeatedly(f, n): # infinite list not allowed.
