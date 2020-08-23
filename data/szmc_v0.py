@@ -149,7 +149,7 @@ def _annotate_text_ox_img_mask_pairs(
 
     rel_name = f'text_ox.auto.h{h}w{w}.v{version}.yml'
     Path(rels_dir, rel_name).write_text(
-        yaml.dump(rel_dic, allow_unicode=True))
+        yaml.dump(rel_dic, allow_unicode=True, sort_keys=False))
 
     # code for manual annotation and experiments. 
     #img_seq = (cv2.cvtColor(cv2.imread(p), cv2.COLOR_BGR2RGB) for p in org_crop_paths) # TODO: rgba?

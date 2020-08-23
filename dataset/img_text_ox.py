@@ -158,4 +158,4 @@ def _generate(dset_yml_incomplete,
 
     # Save dataset to file.
     dset_file_path.write_text(
-        yaml.dump(out_dic, allow_unicode=True))
+        yaml.dump(out_dic, allow_unicode=True, sort_keys=False))
