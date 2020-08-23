@@ -32,7 +32,7 @@ from pathlib import Path
 
 from dataset import img_text_ox
 img_text_ox.generate(
-    'random_select', (5,2,1), 'text_ox.auto.h256w256.v1.yml',
+    'random_select', (7,2,1), 'text_ox.auto.h256w256.v1.yml',
     m101, school)
 
 '''

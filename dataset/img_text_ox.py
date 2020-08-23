@@ -4,12 +4,15 @@ import re
 from parse import parse
 import yaml
 import funcy as F 
+from collections import namedtuple as NT
 
 from utils import fp
+from utils import etc_utils as etc
+from core.split_rdt import rdt_nums, rdt_partition
 
 
-def generate(select, RDT, rel_file_name, *data_sources):
-    ''' RDT is (tRain ratio, Dev ratio, Test ratio) '''
+def generate(select, RDT_ratio, rel_file_name, *data_sources):
+    ''' RDT_ratio is (tRain ratio, Dev ratio, Test ratio) '''
     global SELECT_FN
     # Validate args
     select_fn = SELECT_FN[select]
@@ -29,8 +32,8 @@ def generate(select, RDT, rel_file_name, *data_sources):
     assert len(crop_size_strs) == 1, f'{len(crop_size_strs)} != 1'
     hw_str = crop_size_strs[0]
     h,w = map(int, parse('h{}w{}', hw_str))
-    rel_name = f'img_path.text_ox.h{h}w{w}'
-    _generate(select_fn, RDT, rel_name,
+    rel_name = f'img_path.has_text.h{h}w{w}'
+    _generate(select_fn, RDT_ratio, rel_name,
               **F.zipdict(data_sources,
                           (yaml.safe_load(p.read_text())
                            for p in yml_paths)))
@@ -38,16 +41,39 @@ def generate(select, RDT, rel_file_name, *data_sources):
     
 from pprint import pprint
 
-def random_select(num_train, num_dev, num_test, **src_rels):
-    print(num_train, num_dev, num_test)
-    pprint(src_rels)
+def random_select(RDT_ratio, **src_rels):
+    ''' 
+    src_rels: {data_source: [[path, has-text?]]}
+    To provide some info, it takes data_sorces as keys 
+    But commonly not so useful(Because paths in rels are abs)
+    
+    (path, has_text)pairs, (path, no_text)pairs
+    '''
+    path_has_text_pairs, path_no_text_pairs = fp.go(
+        fp.merge(src_rels).values(),
+        fp.lcat,
+        etc.inplace_shuffled,
+        fp.group_by(fp.tup(lambda path, has_text: has_text)),
+        lambda grouped: (grouped[True], grouped[False]))
+    
+    def split_rdt(pairs):
+        num_rdt_tup = rdt_nums(*RDT_ratio, len(pairs))
+        train,dev,test = rdt_partition(*num_rdt_tup, pairs)
+        return NT('RDT', 'r d t')(train, dev, test)
+    has_text = split_rdt(path_has_text_pairs)
+    no_text = split_rdt(path_no_text_pairs)
+    
+    return dict(
+        train = etc.inplace_shuffled(has_text.r + no_text.r),
+        dev = etc.inplace_shuffled(has_text.d + no_text.d), 
+        test = etc.inplace_shuffled(has_text.t + no_text.t)) 
 
 SELECT_FN = dict(
     random_select = random_select,
 )
 
 @F.autocurry
-def make_abspath(data_source, relation):
+def make_abspath(data_source, relation): # TODO: Need tests
     ''' 
     data_source is path of directory that contains DATA dir. 
     relation is an item of some relations in rel_dic. 
@@ -68,7 +94,8 @@ def make_abspath(data_source, relation):
     else:
         return relation
     
-def _generate(select_fn, RDT, rel_name, **src_rel):
+# Can be refactored later..
+def _generate(select_fn, RDT_ratio, rel_name, **src_rel):
     ''' src_rel: {data_source: relation_dict, ...} '''
     data_srcs, rel_dics = fp.unzip(src_rel.items())
     rels_list = [F.get_in(rel_dic, ['RELATIONS', rel_name])
@@ -80,4 +107,6 @@ def _generate(select_fn, RDT, rel_name, **src_rel):
                  for dat_src, rels in zip(data_srcs, rels_list)]
     
     #pprint(rels_list)
-    rdt_dic = select_fn(*RDT, **F.zipdict(data_srcs, rels_list))
+    rdt_dic = select_fn(RDT_ratio,
+                        **F.zipdict(data_srcs, rels_list))
+    # Save with proper named file.
