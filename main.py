@@ -32,6 +32,7 @@ from pathlib import Path
 
 from dataset import img_text_ox
 img_text_ox.generate(
+    '/home/kur/dev/szmc/SZMC_DSET/img.text_ox',
     'random_select', (7,2,1), 'text_ox.auto.h256w256.v1.yml',
     m101, school)
 
