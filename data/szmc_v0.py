@@ -139,13 +139,13 @@ def _annotate_text_ox_img_mask_pairs(
         ( '이 데이터로 학습 가능한 예상되는 최고 정확도는 0.978임.'
         + ' has_text.manual.1_1000에서 생성한 GT를 쓰기 때문.')},
     'HOW_TO_GEN': {
-        f'img_path.text_ox.h{h}w{w}':
+        f'img_path.has_text.h{h}w{w}':
         (f'python main.py data annotate_text_ox szmc_v0 DATA_SRC {h} {w}'
         + '# crop된 이미지 중에서 (h,w) 크기가 아닌 이미지는 제외됨.')},
     'special_values': {
         'num_has_text': len(fp.lfilter(fp.identity, has_texts)),
         'num_no_text': len(fp.lremove(fp.identity, has_texts))},
-    'RELATIONS': {f'img_path.text_ox.h{h}w{w}': img_tfs}}
+    'RELATIONS': {f'img_path.has_text.h{h}w{w}': img_tfs}}
 
     rel_name = f'text_ox.auto.h{h}w{w}.v{version}.yml'
     Path(rels_dir, rel_name).write_text(
