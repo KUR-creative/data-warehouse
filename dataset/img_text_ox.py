@@ -1,7 +1,5 @@
 from pathlib import Path
-import re
 
-from parse import parse
 import yaml
 import funcy as F 
 from collections import namedtuple as NT
@@ -10,6 +8,7 @@ from utils import fp
 from utils import etc_utils as etc
 from core.split_rdt import rdt_nums, rdt_partition
 import core
+import core.name
 
 
 def generate(dst_dset_dir,

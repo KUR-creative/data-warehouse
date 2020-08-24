@@ -1,5 +1,8 @@
 import re
 
+from parse import parse
+
+
 def h_w(h_w_name):
     ''' 
     get h,w from h_w_name = "....h{h}w{w}....". 
