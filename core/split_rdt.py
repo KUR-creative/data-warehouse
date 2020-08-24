@@ -2,9 +2,6 @@ def rdt_nums(train_ratio, dev_ratio, test_ratio, len_seq):
     ''' num_train is left except dev and train from len_seq. '''
     # Calc ratios.
     total = train_ratio + dev_ratio + test_ratio
-    r = train_ratio / total
-    d = dev_ratio / total
-    t = test_ratio / total
     # Calc nums.
     n_train = int(len_seq * train_ratio / total)
     n_dev = int(len_seq * dev_ratio / total)

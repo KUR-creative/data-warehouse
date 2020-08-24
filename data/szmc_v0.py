@@ -125,7 +125,6 @@ def _annotate_text_ox_img_mask_pairs(
     
     # Save to has_text.auto.1_{len(paths)}.yml #TODO: Refactor
     version = 1
-    rel_size = len(img_tfs)
     rel_dic = {
     'NAME': {
         'text_ox': '텍스트 존재성에 관한 데이터',

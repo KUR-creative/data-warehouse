@@ -54,7 +54,6 @@ def generate(dst_dset_dir,
                            for p in yml_paths)))
 #---------------------------------------------------------------
     
-from pprint import pprint
 
 def random_select(RDT_ratio, **src_rels):
     ''' 
