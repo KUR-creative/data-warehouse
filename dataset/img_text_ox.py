@@ -9,6 +9,7 @@ from collections import namedtuple as NT
 from utils import fp
 from utils import etc_utils as etc
 from core.split_rdt import rdt_nums, rdt_partition
+import core
 
 
 def generate(dst_dset_dir,
@@ -38,10 +39,7 @@ def generate(dst_dset_dir,
             f'{yml_path} is not existing path.'
         
     # Get crop size (h,w) to make 'relation name'.
-    crop_size_strs = re.findall('h[1-9]+w[1-9]+', rel_file_name)
-    assert len(crop_size_strs) == 1, f'{len(crop_size_strs)} != 1'
-    hw_str = crop_size_strs[0]
-    h,w = map(int, parse('h{}w{}', hw_str))
+    h,w = core.name.h_w(rel_file_name)
     rel_name = f'img_path.has_text.h{h}w{w}'
 
     # Make dataset yml path.
