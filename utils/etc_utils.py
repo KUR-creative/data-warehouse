@@ -38,3 +38,10 @@ def partition(y, size):
 
     parts = list(F.pairwise(factorseq(y + size, size)))
     return parts if parts else [(0, y)]
+
+#--------------------------------------------------------------
+import random
+
+def inplace_shuffled(li):
+    random.shuffle(li)
+    return li

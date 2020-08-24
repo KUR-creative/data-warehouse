@@ -42,11 +42,6 @@ def take(n, seq=None):
     return F.take(n,seq) if not is_empty(seq) \
     else lambda xs: F.take(n,xs)
 
-import random
-def inplace_shuffled(li):
-    random.shuffle(li)
-    return li
-
 def lzip(*seqs):
     return list(zip(*seqs))
 def unzip(seq):
@@ -120,6 +115,8 @@ def walk_keys(f, coll=None):
     return F.walk_keys(f, coll) if not is_empty(coll) \
     else lambda coll: F.walk_keys(f, coll)
 
+from funcy import merge
+
 #---------------------------------------------------------------
 from funcy import repeat, repeatedly
 def lrepeatedly(f, n): # infinite list not allowed.
@@ -184,6 +181,7 @@ def pub_attrs(obj):
     return attrs(obj, pub_attr_names)
 
 def prop(p, obj=None):
+    # list and int case?
     return(getattr(obj, p) if (isinstance(obj,tuple) and 
                                isinstance(p,str))
       else obj[p] if hasattr(obj,'__getitem__')
