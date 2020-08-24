@@ -1,0 +1,10 @@
+- [main.py, data, crops, szmc_v0, /home/kur/dev/szmc/SZMC_DATA/v0data/m101, '256', '256']
+- [main.py, data, annotate_text_ox, szmc_v0, /home/kur/dev/szmc/SZMC_DATA/v0data/m101/,
+  '256', '256']
+- [main.py, data, crops, szmc_v0, /home/kur/dev/szmc/SZMC_DATA/v0data/school, '256',
+  '256']
+- [main.py, data, annotate_text_ox, szmc_v0, /home/kur/dev/szmc/SZMC_DATA/v0data/school,
+  '256', '256']
+- [main.py, dset, text_ox, /home/kur/dev/szmc/SZMC_DSET/text_ox, random_select, '7',
+  '2', '1', text_ox.auto.h256w256.v1.yml, /home/kur/dev/szmc/SZMC_DATA/v0data/m101,
+  /home/kur/dev/szmc/SZMC_DATA/v0data/school]

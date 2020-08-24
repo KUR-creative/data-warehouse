@@ -25,6 +25,8 @@ szmc_v0.annotate_has_text(str(Path(root, 'prev_images')),
                           str(Path(root, 'mask1bit')), 256, 256)
 
 '''
+
+'''
 m101 = '/home/kur/dev/szmc/SZMC_DATA/v0data/m101/'
 school = '/home/kur/dev/szmc/SZMC_DATA/v0data/school/'
 
@@ -42,4 +44,3 @@ import fire
 import cli
 if __name__ == '__main__':
     fire.Fire(cli.interface)
-'''
