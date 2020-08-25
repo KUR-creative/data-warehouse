@@ -38,11 +38,12 @@ img_text_ox.generate(
     m101, school)
 '''
 
-from out import tfrecord
+#from out import tfrecord
+from dataset import img_text_ox
 inp = '/home/kur/dev/szmc/SZMC_DSET/text_ox/DSET/img.has_text.h256w256.0_2463.0_703.0_354.yml'
 #out = '/home/kur/dev/szmc/SZMC_DSET/text_ox/OUTS/img.has_text.h256w256.0_2463.0_703.0_354.tfrecord'
 out = 'test.tfrecord'
-tfrecord.generate(inp, out)
+img_text_ox.output(inp, out)
 
 print('------ save & load to read ------')
 from pprint import pprint
@@ -52,11 +53,11 @@ import cv2
 
 @tf.function
 def decode_raw(str_tensor, shape, dtype=tf.uint8):
-    ''' Decode str_tensor(no type) to dtype(defalut=tf.uint8). '''
+    #Decode str_tensor(no type) to dtype(defalut=tf.uint8).
     return tf.reshape(
         tf.io.decode_raw(str_tensor, dtype), shape)
 tfrec = tf.data.TFRecordDataset(out)
-dic = tfrecord.read(tfrec)
+dic = img_text_ox.read(tfrec)
 h,w = dic['crop_height'], dic['crop_width']
 pprint(F.omit(dic, ['train','dev','test']), sort_dicts=False)
 
