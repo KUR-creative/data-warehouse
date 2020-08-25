@@ -116,8 +116,50 @@ class dset(object):
         check_and_write_log(logging, out_dset_dir)
         check_and_write_dw_log(logging)
                    
+class out(object):
+    ''' Export dataset as learnable artifact(s) '''
+    @staticmethod
+    def text_ox(out_form, dset_path, out_path='',
+                note=None, logging=True):
+        '''
+        (이미지: 텍스트 존재성) 데이터셋 export
+        
+        [[이미지, 텍스트 존재성]] 데이터셋 yml(DSET_PATH)에서 
+        OUT_FORM 형식의 학습 가능한 아티팩트를 OUT_PATH에 저장한다.
+        (현재 tfrecord만 지원)
+        
+        OUT_PATH는 비워두고, 다음과 같이 실행할 것을 권장함.
+        python main.py out text_ox tfrecord $dp   --note='...'
+        
+        args:
+        out_form: 저장 가능한 아티팩트 형식, 현재 tfrecord만 지원.
+        dset_path: 데이터셋 yml의 경로.
+        out_path: 출력할 위치. 기본 값으로는 DSET_PATH에서 DSET을 
+        OUTS로 바꾸고 extension을 수정한 경로. 부모 dir이 반드시
+        DSET, META, OUTS 디렉토리를 가져야 한다. 
+        note: 이 작업에 대한 추가적인 설명.
+        logging: False일 경우 로깅하지 않음
+        '''
+        if out_form != 'tfrecord':
+            raise NotImplementedError(
+                "Currently only 'tfrecord' is supported")
+        
+        dp = Path(dset_path)
+        dset_path = str(dp.resolve())
+        
+        dset_root = Path(*dp.parts[:-2])
+        out_path = str(
+            Path(out_path).resolve() if out_path else
+            dset_root / 'OUTS' / f'{dp.stem}.{out_form}')
+
+        img_text_ox.output(dset_path, out_path)
+
+        check_and_write_log(logging, dset_root)
+        check_and_write_dw_log(logging)
+        
 
 #----------------------------------------------------------------
 class interface(object):
     data = data
     dset = dset
+    out = out

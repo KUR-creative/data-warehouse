@@ -38,6 +38,7 @@ img_text_ox.generate(
     m101, school)
 '''
 
+'''
 #from out import tfrecord
 from dataset import img_text_ox
 inp = '/home/kur/dev/szmc/SZMC_DSET/text_ox/DSET/img.has_text.h256w256.0_2463.0_703.0_354.yml'
@@ -108,4 +109,3 @@ import fire
 import cli
 if __name__ == '__main__':
     fire.Fire(cli.interface)
-'''

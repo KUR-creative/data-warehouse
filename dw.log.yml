@@ -8,3 +8,4 @@
 - [main.py, dset, text_ox, /home/kur/dev/szmc/SZMC_DSET/text_ox, random_select, '7',
   '2', '1', text_ox.auto.h256w256.v1.yml, /home/kur/dev/szmc/SZMC_DATA/v0data/m101,
   /home/kur/dev/szmc/SZMC_DATA/v0data/school]
+- [main.py, out, text_ox, tfrecord, /home/kur/dev/szmc/SZMC_DSET/text_ox/DSET/img.has_text.h256w256.0_2463.0_703.0_354.yml]
