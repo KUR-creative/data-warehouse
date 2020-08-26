@@ -11,3 +11,7 @@
 - [main.py, out, text_ox, tfrecord, /home/kur/dev/szmc/SZMC_DSET/text_ox/DSET/img.has_text.h256w256.0_2463.0_703.0_354.yml]
 - [main.py, data, crops, manga109, /home/kur/dev/szmc/SZMC_DATA/manga109, '256', '256',
   '[10,20]']
+- [main.py, data, copy_hw_images, '256', '256', /home/kur/dev/szmc/SZMC_DATA/manga109/DATA/crop/pp10_20.h256w256.h_pad/]
+- [main.py, data, crops, manga109, /home/kur/dev/szmc/SZMC_DATA/manga109, '256', '256',
+  '[5,10,15,20,25,30]']
+- [main.py, data, copy_hw_images, '256', '256', /home/kur/dev/szmc/SZMC_DATA/manga109/DATA/crop/pp5_10_15_20_25_30.h256w256.h_pad/]

@@ -1,10 +1,12 @@
 from pathlib import Path
 from importlib import import_module
 import sys
+import shutil
 
 import yaml
 
 from dataset import img_text_ox
+from utils import file_utils as fu
 
 def assert_valid_data_source(dir_path):
     assert Path(dir_path).exists()
@@ -34,6 +36,33 @@ def write_log(log_path, content):
 
 class data(object):
     ''' Add data to data-sources '''
+    
+    @staticmethod
+    def copy_hw_images(height, width, src_dir, dst_dir=None,
+                       note=None, logging=True):
+        '''
+        크기가 h,w인 이미지만 src_dir에서 dst_dir로 복사한다. 
+        디렉토리 구조가 유지된다.
+        
+        args:
+        height: 이미지 height
+        width: 이미지 width
+        src_dir: 복사할 디렉토리 경로
+        dst_dir: SRC_DIR을 붙여 넣을 디렉토리. None이라면 src_dir에 
+                 '.strict_hw'가 붙는다.
+        '''
+        dst_dir = str(Path(src_dir)) + '.strict_hw'
+        shutil.copytree(src_dir, dst_dir)
+        
+        import imagesize
+        small_img_paths = list(filter(
+            lambda p: imagesize.get(p) != (width, height),
+            fu.descendants(dst_dir)))
+        for path in small_img_paths:
+            Path(path).unlink()
+            
+        check_and_write_dw_log(logging)
+    
     @staticmethod
     def crops(module, data_source, crop_h, crop_w, *args,
               note=None, logging=True):
