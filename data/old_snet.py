@@ -10,36 +10,11 @@ from utils import file_utils as fu
 from utils import etc_utils as etc
 from utils import image_utils as iu
 
-
-def generate_crops(data_source, h, w, pages='*'): # TODO: refactor
-    '''
-    '*' means all pages 
-    '''
-    if pages == '*':
-        raise NotImplementedError(
-            "Currently only pages: List[int] is supported")
-    # Get src images
-    DATA_dir = Path(data_source, 'DATA')
-    img_root_dir = Path(DATA_dir, 'images')
+def generate_crops(data_source, h, w): # TODO: refactor
     
-    paths = [Path(p) for p in fu.descendants(img_root_dir)]
-    selected_paths = fp.lfilter(
-        lambda p: int(p.stem.split('_')[-1]) in pages, paths)
-    #pprint(selected_paths)
-    
-    title_paths = fp.group_by(
-        lambda p: p.parent.stem, selected_paths)
-    dst_crops_dir = Path(
-        DATA_dir,
-        'crop',
-        'pp' + etc.sjoin('_', pages) + f'.h{h}w{w}.h_pad')
-    #print(dst_crops_dir)
-    for title, paths in tqdm(title_paths.items()):
-        _gen_crops(DATA_dir, paths, h, w, dst_crops_dir / title)
-
 def _gen_crops(DATA_dir, img_paths, h, w, dst_crops_dir):
     '''
-    NOTE: height가 짧다면를 h가 되도록 패딩을 한다.
+    NOTE: h,w/3 <= height < h,w/3 이면 h,w가 되도록 패딩을 한다.
     
     DATA_dir: 데이터 소스의 DATA 디렉토리 경로
     img_path: 자르려는 이미지의 경로
