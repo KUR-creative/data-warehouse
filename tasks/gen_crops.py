@@ -1,22 +1,22 @@
 import itertools as I
 from pathlib import Path
 
-import cv2
 from funcy import memoize
 import imagesize
 
-from utils import fp
+from utils import fp, image_utils as iu
 from utils.etc_utils import factors, modulo_pad
 
-
 def do(img_paths, crop_h, crop_w, crop_dir):
-    ''' crop_dir is directory path to save generated crops. '''
+    ''' 
+    crop_dir is directory path to save generated crops. 
+    return: <(path, crop)>. crop is rgb (h,w) image.
+    '''
     # Make [(fname, extension)]
     stem_ext_lst = (
         (p.stem, p.suffix) for p in map(Path, img_paths))
     # Make <img> img sequence 
-    imgseq = (cv2.cvtColor(cv2.imread(p), cv2.COLOR_BGR2RGB)
-              for p in img_paths) # TODO: rgba?
+    imgseq = (iu.cv.read_rgb(p) for p in img_paths) # TODO: rgba?
     # Make [[(y,x)]] # TODO: refactor to core.crops(h,w,ch,cw)?
     ws, hs = fp.unzip(imagesize.get(p) for p in img_paths)
     hs = (h + _modulo_pad(crop_h, h) for h in hs)
