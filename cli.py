@@ -6,6 +6,12 @@ import yaml
 
 from dataset import img_text_ox
 
+def assert_valid_data_source(dir_path):
+    assert Path(dir_path).exists()
+    assert Path(dir_path).is_absolute()
+    assert Path(dir_path, 'DATA').exists()
+    assert Path(dir_path, 'META').exists()
+    assert Path(dir_path, 'RELS').exists()
 
 def check_and_write_dw_log(logging):
     ''' Convenient helper func to log dw.log.yml '''
@@ -29,7 +35,7 @@ def write_log(log_path, content):
 class data(object):
     ''' Add data to data-sources '''
     @staticmethod
-    def crops(module, data_source, crop_h, crop_w,
+    def crops(module, data_source, crop_h, crop_w, *args,
               note=None, logging=True):
         '''
         잘린 이미지(crops) 데이터 생성
@@ -45,12 +51,14 @@ class data(object):
         data_source: 처리하려는 데이터 소스의 경로.
         crop_h: crop의 height.
         crop_w: crop의 width.
+        *args: generate_crops의 추가적인 인자. MODULE을 참고할 것.
         note: 이 작업에 대한 추가적인 설명.
         logging: False일 경우 로깅하지 않음
         '''
-        assert Path(data_source).is_absolute()
+        assert_valid_data_source(data_source)
+        
         m = import_module(f'data.{module}', 'data')
-        m.generate_crops(data_source, crop_h, crop_w)
+        m.generate_crops(data_source, crop_h, crop_w, *args)
         
         check_and_write_log(logging, data_source)
         check_and_write_dw_log(logging)
