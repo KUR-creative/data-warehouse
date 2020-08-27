@@ -39,7 +39,7 @@ def generate_crops(data_source, h, w, pages='*'): # TODO: refactor
 
 def _gen_crops(DATA_dir, img_paths, h, w, dst_crops_dir):
     '''
-    NOTE: height가 짧다면를 h가 되도록 패딩을 한다.
+    NOTE: height가 짧다면 h가 되도록 패딩을 한다.
     
     DATA_dir: 데이터 소스의 DATA 디렉토리 경로
     img_path: 자르려는 이미지의 경로
