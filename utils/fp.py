@@ -103,6 +103,8 @@ def group_by(f, seq=None):
     return F.group_by(f, seq) if not is_empty(seq)\
     else lambda xs: F.group_by(f, xs)
 
+from funcy import zipdict
+
 def walk(f,*seq):
     return F.walk(f,*seq) if not is_empty(seq) \
     else lambda *xs: F.walk(f,*xs)
