@@ -4,14 +4,11 @@ from pathlib import Path
 import sys
 import socket
 
-import cv2
-import imagesize
 import json
 import yaml
 import funcy as F
 
 import core; import core.name
-from tasks import gen_crops
 from utils import fp, file_utils as fu, etc_utils as etc
 
 
