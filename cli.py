@@ -7,6 +7,7 @@ import yaml
 
 from dataset import img_text_ox
 from utils import file_utils as fu
+from utils.etc_utils import git_hash
 
 def assert_valid_data_source(dir_path):
     assert Path(dir_path).exists()
@@ -18,12 +19,13 @@ def assert_valid_data_source(dir_path):
 def check_and_write_dw_log(logging):
     ''' Convenient helper func to log dw.log.yml '''
     if logging:
-        write_log('dw.log.yml', sys.argv)
+        write_log('dw.log.yml', sys.argv + [f'#{git_hash()}'])
         
 def check_and_write_log(logging, out_dir):
     ''' Convenient helper func. out_dir must have 'META' dir. '''
     if logging:
-        write_log(Path(out_dir, 'META', 'log.yml'), sys.argv)
+        write_log(Path(out_dir, 'META', 'log.yml'),
+                  sys.argv + [f'#{git_hash()}'])
         
 def write_log(log_path, content):
     ''' Append or create content to log. content is just py obj. '''

@@ -15,3 +15,7 @@
 - [main.py, data, crops, manga109, /home/kur/dev/szmc/SZMC_DATA/manga109, '256', '256',
   '[5,10,15,20,25,30]']
 - [main.py, data, copy_hw_images, '256', '256', /home/kur/dev/szmc/SZMC_DATA/manga109/DATA/crop/pp5_10_15_20_25_30.h256w256.h_pad/]
+- [main.py, data, annotate_text_ox, via_json, /home/kur/dev/szmc/SZMC_DATA/manga109,
+  '256', '256', /home/kur/dev/szmc/SZMC_DATA/manga109/DATA/crop/pp5_10_15_20_25_30.h256w256.h_pad.strict_hw/,
+  /home/kur/dev/szmc/SZMC_DATA/manga109/DATA/crop_note/pp5_10_15_20_25_30.h256w256.h_pad.strict_hw,
+  '#4350fb8e0977dc415c782f3a966e9bf0d34428e9']
