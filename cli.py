@@ -93,7 +93,8 @@ class data(object):
         check_and_write_dw_log(logging)
             
     @staticmethod
-    def annotate_text_ox(module, data_source, crop_h, crop_w,
+    def annotate_text_ox(module,
+                         data_source, crop_h, crop_w, *args,
                          note=None, logging=True):
         '''
         텍스트 존재성 어노테이션 데이터(관계) 생성
@@ -108,12 +109,14 @@ class data(object):
         data_source: 처리하려는 데이터 소스의 경로.
         crop_h: crop의 height. DATA_SOURCE와 함께 crop 이미지가 있는 폴더를 결정함.
         crop_w: crop의 width. DATA_SOURCE와 함께 crop 이미지가 있는 폴더를 결정함.
+        *args: annotate_text_ox의 추가적인 인자. MODULE을 참고할 것.
         note: 이 작업에 대한 추가적인 설명.
         logging: False일 경우 로깅하지 않음
         '''
-        assert Path(data_source).is_absolute()
+        assert_valid_data_source(data_source)
+        
         m = import_module(f'data.{module}', 'data')
-        m.annotate_text_ox(data_source, crop_h, crop_w)
+        m.annotate_text_ox(data_source, crop_h, crop_w, *args)
         
         check_and_write_log(logging, data_source)
         check_and_write_dw_log(logging)
