@@ -44,6 +44,9 @@ def select(at, path=None):
 
 def extension(path):
     return Path(path).suffix.replace('.','',1)
+
+def stem(path):
+    return Path(path).stem
     
 #---------------------------------------------------------------
 def human_sorted(iterable):
