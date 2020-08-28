@@ -45,3 +45,8 @@ import random
 def inplace_shuffled(li):
     random.shuffle(li)
     return li
+
+#--------------------------------------------------------------
+from typing import Iterable, Any
+def sjoin(s, iterable: Iterable[Any]):
+    return s.join(map(str, iterable))

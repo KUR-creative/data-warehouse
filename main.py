@@ -4,7 +4,6 @@
 #mask_dir = '../SZMC_DATA/v0data/m101/mask1bit/'
 #gen_crops.do(img_dir, 512, 512)
 #gen_crops.do(mask_dir, 512, 512)
-from data import szmc_v0
 root = '../SZMC_DATA/v0data/m101/DATA'
 #szmc_v0.gen_crops(root, 512, 512)
 #szmc_v0.save_crops(root, 256, 256)
@@ -37,9 +36,75 @@ img_text_ox.generate(
     '/home/kur/dev/szmc/SZMC_DSET/img.text_ox',
     'random_select', (7,2,1), 'text_ox.auto.h256w256.v1.yml',
     m101, school)
-
 '''
 
+'''
+#from out import tfrecord
+from dataset import img_text_ox
+inp = '/home/kur/dev/szmc/SZMC_DSET/text_ox/DSET/img.has_text.h256w256.0_2463.0_703.0_354.yml'
+#out = '/home/kur/dev/szmc/SZMC_DSET/text_ox/OUTS/img.has_text.h256w256.0_2463.0_703.0_354.tfrecord'
+out = 'test.tfrecord'
+img_text_ox.output(inp, out)
+
+print('------ save & load to read ------')
+from pprint import pprint
+import tensorflow as tf
+import funcy as F
+import cv2
+
+@tf.function
+def decode_raw(str_tensor, shape, dtype=tf.uint8):
+    #Decode str_tensor(no type) to dtype(defalut=tf.uint8).
+    return tf.reshape(
+        tf.io.decode_raw(str_tensor, dtype), shape)
+tfrec = tf.data.TFRecordDataset(out)
+dic = img_text_ox.read(tfrec)
+h,w = dic['crop_height'], dic['crop_width']
+pprint(F.omit(dic, ['train','dev','test']), sort_dicts=False)
+
+for datum in dic['train'].take(10):
+    print(datum['cls'].numpy(),
+          '=',
+          'has-txt' if datum['cls'] else 'no-txt')
+    decoded = decode_raw(datum['img'], (h,w,3))
+    img = decoded.numpy()
+    cv2.imshow('im', cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
+    cv2.waitKey(0)
+print('----')
+n = 0
+for _ in dic['train']:
+    n += 1
+assert n == dic['num_train']
+    
+for datum in dic['dev'].take(10):
+    print(datum['cls'].numpy(),
+          '=',
+          'has-txt' if datum['cls'] else 'no-txt')
+    decoded = decode_raw(datum['img'], (h,w,3))
+    img = decoded.numpy()
+    cv2.imshow('im', cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
+    cv2.waitKey(0)
+print('----')
+n = 0
+for _ in dic['dev']:
+    n += 1
+assert n == dic['num_dev']
+    
+for datum in dic['test'].take(10):
+    print(datum['cls'].numpy(),
+          '=',
+          'has-txt' if datum['cls'] else 'no-txt')
+    decoded = decode_raw(datum['img'], (h,w,3))
+    img = decoded.numpy()
+    cv2.imshow('im', cv2.cvtColor(img, cv2.COLOR_RGB2BGR))
+    cv2.waitKey(0)
+print('----')
+n = 0
+for _ in dic['test']:
+    n += 1
+assert n == dic['num_test']
+
+'''
 import fire
 import cli
 if __name__ == '__main__':

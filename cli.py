@@ -1,11 +1,19 @@
 from pathlib import Path
 from importlib import import_module
 import sys
+import shutil
 
 import yaml
 
 from dataset import img_text_ox
+from utils import file_utils as fu
 
+def assert_valid_data_source(dir_path):
+    assert Path(dir_path).exists()
+    assert Path(dir_path).is_absolute()
+    assert Path(dir_path, 'DATA').exists()
+    assert Path(dir_path, 'META').exists()
+    assert Path(dir_path, 'RELS').exists()
 
 def check_and_write_dw_log(logging):
     ''' Convenient helper func to log dw.log.yml '''
@@ -28,8 +36,35 @@ def write_log(log_path, content):
 
 class data(object):
     ''' Add data to data-sources '''
+    
     @staticmethod
-    def crops(module, data_source, crop_h, crop_w,
+    def copy_hw_images(height, width, src_dir, dst_dir=None,
+                       note=None, logging=True):
+        '''
+        크기가 h,w인 이미지만 src_dir에서 dst_dir로 복사한다. 
+        디렉토리 구조가 유지된다.
+        
+        args:
+        height: 이미지 height
+        width: 이미지 width
+        src_dir: 복사할 디렉토리 경로
+        dst_dir: SRC_DIR을 붙여 넣을 디렉토리. None이라면 src_dir에 
+                 '.strict_hw'가 붙는다.
+        '''
+        dst_dir = str(Path(src_dir)) + '.strict_hw'
+        shutil.copytree(src_dir, dst_dir)
+        
+        import imagesize
+        small_img_paths = list(filter(
+            lambda p: imagesize.get(p) != (width, height),
+            fu.descendants(dst_dir)))
+        for path in small_img_paths:
+            Path(path).unlink()
+            
+        check_and_write_dw_log(logging)
+    
+    @staticmethod
+    def crops(module, data_source, crop_h, crop_w, *args,
               note=None, logging=True):
         '''
         잘린 이미지(crops) 데이터 생성
@@ -45,12 +80,14 @@ class data(object):
         data_source: 처리하려는 데이터 소스의 경로.
         crop_h: crop의 height.
         crop_w: crop의 width.
+        *args: generate_crops의 추가적인 인자. MODULE을 참고할 것.
         note: 이 작업에 대한 추가적인 설명.
         logging: False일 경우 로깅하지 않음
         '''
-        assert Path(data_source).is_absolute()
+        assert_valid_data_source(data_source)
+        
         m = import_module(f'data.{module}', 'data')
-        m.generate_crops(data_source, crop_h, crop_w)
+        m.generate_crops(data_source, crop_h, crop_w, *args)
         
         check_and_write_log(logging, data_source)
         check_and_write_dw_log(logging)
@@ -116,8 +153,50 @@ class dset(object):
         check_and_write_log(logging, out_dset_dir)
         check_and_write_dw_log(logging)
                    
+class out(object):
+    ''' Export dataset as learnable artifact(s) '''
+    @staticmethod
+    def text_ox(out_form, dset_path, out_path='',
+                note=None, logging=True):
+        '''
+        (이미지: 텍스트 존재성) 데이터셋 export
+        
+        [[이미지, 텍스트 존재성]] 데이터셋 yml(DSET_PATH)에서 
+        OUT_FORM 형식의 학습 가능한 아티팩트를 OUT_PATH에 저장한다.
+        (현재 tfrecord만 지원)
+        
+        OUT_PATH는 비워두고, 다음과 같이 실행할 것을 권장함.
+        python main.py out text_ox tfrecord $dp   --note='...'
+        
+        args:
+        out_form: 저장 가능한 아티팩트 형식, 현재 tfrecord만 지원.
+        dset_path: 데이터셋 yml의 경로.
+        out_path: 출력할 위치. 기본 값으로는 DSET_PATH에서 DSET을 
+        OUTS로 바꾸고 extension을 수정한 경로. 부모 dir이 반드시
+        DSET, META, OUTS 디렉토리를 가져야 한다. 
+        note: 이 작업에 대한 추가적인 설명.
+        logging: False일 경우 로깅하지 않음
+        '''
+        if out_form != 'tfrecord':
+            raise NotImplementedError(
+                "Currently only 'tfrecord' is supported")
+        
+        dp = Path(dset_path)
+        dset_path = str(dp.resolve())
+        
+        dset_root = Path(*dp.parts[:-2])
+        out_path = str(
+            Path(out_path).resolve() if out_path else
+            dset_root / 'OUTS' / f'{dp.stem}.{out_form}')
+
+        img_text_ox.output(dset_path, out_path)
+
+        check_and_write_log(logging, dset_root)
+        check_and_write_dw_log(logging)
+        
 
 #----------------------------------------------------------------
 class interface(object):
     data = data
     dset = dset
+    out = out
