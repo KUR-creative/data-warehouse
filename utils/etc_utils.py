@@ -54,3 +54,10 @@ def inplace_shuffled(li):
 from typing import Iterable, Any
 def sjoin(s, iterable: Iterable[Any]):
     return s.join(map(str, iterable))
+
+#--------------------------------------------------------------
+import subprocess
+def git_hash():
+    return (subprocess
+       .check_output(['git', 'rev-parse', 'HEAD'])
+       .strip().decode('utf8'))
