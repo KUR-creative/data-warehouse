@@ -1,4 +1,8 @@
-import funcy as F
+''' 
+Miscellaneous useful utility functions.
+These functions could be used by copy & paste. To do so, 
+a module import statement is close to the function it uses.
+'''
 
 def modulo_pad(m, x=None):
     ''' 2a = x + modulo_pad (mod m), where a < x < 2a '''
@@ -29,6 +33,7 @@ def factorseq(d, y=None):
 def factors(d, y=None): # for memoization
     return list(factorseq(d,y))
         
+import funcy as F
 def partition(y, size):
     ''' 
     y => [y0, y1), [y1, y2), ... , [yN-1, y),
@@ -41,7 +46,6 @@ def partition(y, size):
 
 #--------------------------------------------------------------
 import random
-
 def inplace_shuffled(li):
     random.shuffle(li)
     return li
@@ -50,3 +54,10 @@ def inplace_shuffled(li):
 from typing import Iterable, Any
 def sjoin(s, iterable: Iterable[Any]):
     return s.join(map(str, iterable))
+
+#--------------------------------------------------------------
+import subprocess
+def git_hash():
+    return (subprocess
+       .check_output(['git', 'rev-parse', 'HEAD'])
+       .strip().decode('utf8'))

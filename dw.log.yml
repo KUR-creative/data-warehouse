@@ -15,3 +15,15 @@
 - [main.py, data, crops, manga109, /home/kur/dev/szmc/SZMC_DATA/manga109, '256', '256',
   '[5,10,15,20,25,30]']
 - [main.py, data, copy_hw_images, '256', '256', /home/kur/dev/szmc/SZMC_DATA/manga109/DATA/crop/pp5_10_15_20_25_30.h256w256.h_pad/]
+- [main.py, data, annotate_text_ox, via_json, /home/kur/dev/szmc/SZMC_DATA/manga109,
+  '256', '256', /home/kur/dev/szmc/SZMC_DATA/manga109/DATA/crop/pp5_10_15_20_25_30.h256w256.h_pad.strict_hw/,
+  /home/kur/dev/szmc/SZMC_DATA/manga109/DATA/crop_note/pp5_10_15_20_25_30.h256w256.h_pad.strict_hw,
+  '#4350fb8e0977dc415c782f3a966e9bf0d34428e9']
+- [main.py, dset, text_ox, /home/kur/dev/szmc/SZMC_DSET/text_ox, random_select, '7',
+  '2', '1', crop_note/pp5_10_15_20_25_30.h256w256.h_pad.n4140.yml, /home/kur/dev/szmc/SZMC_DATA/manga109,
+  '#280d2a6d623625f7bc40244c8534cb81e4240458']
+- [main.py, dset, text_ox, /home/kur/dev/szmc/SZMC_DSET/text_ox, random_select, '7',
+  '2', '1', crop_note/pp5_10_15_20_25_30.h256w256.h_pad.n4140.yml, /home/kur/dev/szmc/SZMC_DATA/manga109,
+  '#9970299800b5ef2b16bccd4ae3e13b889e1940cc']
+- [main.py, out, text_ox, tfrecord, /home/kur/dev/szmc/SZMC_DSET/text_ox/DSET/img.has_text.h256w256.0_2898.0_828.0_414.yml,
+  '#41969f2774148fe1fbebe3fcef2aea4715d1da69']

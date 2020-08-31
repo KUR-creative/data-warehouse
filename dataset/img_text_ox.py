@@ -1,5 +1,7 @@
 from collections import namedtuple as NT
 from pathlib import Path
+import socket
+import sys
 
 import cv2
 import funcy as F 
@@ -174,9 +176,18 @@ def read(tfrecord: tf.data.TFRecordDataset):
 
 def random_select(RDT_ratio, **src_rels):
     ''' 
+    Select relations from shuffled src_rels.
+    
+    This function selects data from non-text data and has-text
+    data in RDT ratio(So it generates 6 packs of pairs:
+    tRain[no-texts, has-texts], Dev[no-texts, has-texts], 
+    Test[no-texts, has-texts]) and mixes them to form R,D,T.
+    
+    args:
     src_rels: {data_source: [[path, has-text?]]}
     To provide some info, it takes data_sorces as keys 
-    But commonly not so useful(Because paths in rels are abs)
+    But commonly not so useful.
+    (Because paths in relations are abs)
     
     (path, has_text)pairs, (path, no_text)pairs
     '''
@@ -248,20 +259,6 @@ def _generate(dset_yml_incomplete,
     rdt_dic = select_fn(RDT_ratio,
                         **F.zipdict(data_srcs, rels_list))
     
-    # Make out dict.
-    data_sources = list(src_rel.keys())
-    meta_dic = {
-    'NAME': {
-        'img_path.has_text': '[[이미지 경로, 텍스트 존재성]] 관계 모음',
-        'h{h}w{w}': 'crop 크기'},
-    'DATA_SOURCES': data_sources,
-    'DESCRIPTION': {
-        'WHAT': 'DATA_SOURCES에 존재하는 이미지:텍스트 존재성 관계를 모아 R/D/T로 생성한 데이터셋',
-        'WHY': '만화 이미지의 텍스트 존재성 분류 학습을 위해서 생성함',
-        'KNWON_ERRORS': None},
-    'HOW_TO_GEN': 'cli cmd...'}
-    out_dic = F.merge(meta_dic, rdt_dic)
-    
     # Make yaml file path.
     r_train = 0; r_dev = 0; r_test = 0; # r: revision
     n_train = len(rdt_dic['TRAIN']) # n: num (size)
@@ -271,7 +268,29 @@ def _generate(dset_yml_incomplete,
             + f'.{r_dev}_{n_dev}'
             + f'.{r_test}_{n_test}.yml')
     dset_file_path = Path(str(dset_yml_incomplete) + ver_str)
+    
+    # Make out dict.
+    data_sources = list(src_rel.keys())
+    meta_dic = {
+    'NAME': {
+        'img_path.has_text': '[[이미지 경로, 텍스트 존재성]] 관계 모음',
+        'h{h}w{w}': 'crop 크기',
+        ver_str: '(train-version)_(train-datum-num).D_D.T_T'},
+    'DATA_SOURCES': data_sources,
+    'DESCRIPTION': {
+        'WHAT': 'DATA_SOURCES에 존재하는 이미지:텍스트 존재성 관계를 모아 R/D/T로 생성한 데이터셋',
+        'WHY': '만화 이미지의 텍스트 존재성 분류 학습을 위해서 생성함',
+        'KNWON_ERRORS': None},
+    'CREATION': {
+        'HOST_NAME': socket.gethostname(),
+        'COMMAND': ' '.join(sys.argv),
+        'GIT_HASH': etc.git_hash()
+    },
+    'HOW_TO_GEN': ''}
+    out_dic = F.merge(meta_dic, rdt_dic)
 
     # Save dataset to file.
+    if dset_file_path.exists():
+        exit('ABORT: Same named dset.yml already exists!')
     dset_file_path.write_text(
         yaml.dump(out_dic, allow_unicode=True, sort_keys=False))

@@ -7,6 +7,7 @@ import yaml
 
 from dataset import img_text_ox
 from utils import file_utils as fu
+from utils.etc_utils import git_hash
 
 def assert_valid_data_source(dir_path):
     assert Path(dir_path).exists()
@@ -18,12 +19,13 @@ def assert_valid_data_source(dir_path):
 def check_and_write_dw_log(logging):
     ''' Convenient helper func to log dw.log.yml '''
     if logging:
-        write_log('dw.log.yml', sys.argv)
+        write_log('dw.log.yml', sys.argv + [f'#{git_hash()}'])
         
 def check_and_write_log(logging, out_dir):
     ''' Convenient helper func. out_dir must have 'META' dir. '''
     if logging:
-        write_log(Path(out_dir, 'META', 'log.yml'), sys.argv)
+        write_log(Path(out_dir, 'META', 'log.yml'),
+                  sys.argv + [f'#{git_hash()}'])
         
 def write_log(log_path, content):
     ''' Append or create content to log. content is just py obj. '''
@@ -93,7 +95,8 @@ class data(object):
         check_and_write_dw_log(logging)
             
     @staticmethod
-    def annotate_text_ox(module, data_source, crop_h, crop_w,
+    def annotate_text_ox(module,
+                         data_source, crop_h, crop_w, *args,
                          note=None, logging=True):
         '''
         텍스트 존재성 어노테이션 데이터(관계) 생성
@@ -108,12 +111,14 @@ class data(object):
         data_source: 처리하려는 데이터 소스의 경로.
         crop_h: crop의 height. DATA_SOURCE와 함께 crop 이미지가 있는 폴더를 결정함.
         crop_w: crop의 width. DATA_SOURCE와 함께 crop 이미지가 있는 폴더를 결정함.
+        *args: annotate_text_ox의 추가적인 인자. MODULE을 참고할 것.
         note: 이 작업에 대한 추가적인 설명.
         logging: False일 경우 로깅하지 않음
         '''
-        assert Path(data_source).is_absolute()
+        assert_valid_data_source(data_source)
+        
         m = import_module(f'data.{module}', 'data')
-        m.annotate_text_ox(data_source, crop_h, crop_w)
+        m.annotate_text_ox(data_source, crop_h, crop_w, *args)
         
         check_and_write_log(logging, data_source)
         check_and_write_dw_log(logging)
@@ -135,12 +140,16 @@ class dset(object):
         
         args:
         out_dset_dir: 생성한 데이터셋 yml 파일이 저장되는 DSET, META, OUTS을 포함하는 폴더.
-        select: tRain/Dev/Test를 선택하는 함수. SELECT_FN이 정의된 모듈을 참조할 것.
+        select: tRain/Dev/Test를 선택하는 함수. 현재 random_select만 지원. 
+                SELECT_FN이 정의된 모듈을 참조할 것.
         train_ratio: 학습 데이터의 비율, 정수. 내부적으로는 R / (R + D + T)로 계산한다.
         dev_ratio: 개발 데이터의 비율, 정수. 내부적으로는 D / (R + D + T)로 계산한다.
         test_ratio: 테스트 데이터의 비율, 정수. 내부적으로는 T / (R + D + T)로 계산한다.
         rel_file_name: data_source_dir/RELS에 존재하는 yml 중 처리하길 원하는 파일의 이름.
-        data_source_dirs: 처리를 원하는 데이터 소스들 리스트.
+                       만일 RELS 아래 폴더에 포함된 파일이면, 폴더 또한 경로에 포함한다.
+                       즉 RELS에 상대적인 경로이다. 
+        *data_source_dirs: 처리를 원하는 데이터 소스들(DATA, META, RELS 포함). 하나 이상이 포함될 수 있다.
+                           RELS 아래에 REL_FILE_NAME을 만족하는 파일이 있어야 한다.
         note: 이 작업에 대한 추가적인 설명.
         logging: False일 경우 로깅하지 않음
         '''

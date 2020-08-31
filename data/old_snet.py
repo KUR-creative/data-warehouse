@@ -7,7 +7,6 @@ from tqdm import tqdm
 from tasks import gen_crops
 from utils import fp 
 from utils import file_utils as fu
-from utils import etc_utils as etc
 from utils import image_utils as iu
 
 def generate_crops(data_source, h, w): # TODO: refactor
@@ -36,7 +35,6 @@ def generate_crops(data_source, h, w): # TODO: refactor
             crop_dir = num2crop_dir[ get10x(int(Path(path).stem)) ]
             _gen_crops(DATA_dir, [path], h, w, crop_dir)
 
-import cv2
 def _gen_crops(DATA_dir, img_paths, h, w, dst_crops_dir):
     '''
     NOTE: 크기가 작다면 h,w가 되도록 패딩을 한다.
@@ -60,6 +58,7 @@ def _gen_crops(DATA_dir, img_paths, h, w, dst_crops_dir):
     # look & feel check (and count crops)
     '''
     num = 0
+    import cv2
     for p, c in path_crop_seq:
         print(dst_crops_dir, p, c.shape);
         #cv2.imshow('c',pad(c, h, w)); cv2.waitKey(0)
