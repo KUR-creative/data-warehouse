@@ -140,7 +140,8 @@ class dset(object):
         
         args:
         out_dset_dir: 생성한 데이터셋 yml 파일이 저장되는 DSET, META, OUTS을 포함하는 폴더.
-        select: tRain/Dev/Test를 선택하는 함수. SELECT_FN이 정의된 모듈을 참조할 것.
+        select: tRain/Dev/Test를 선택하는 함수. 현재 random_select만 지원. 
+                SELECT_FN이 정의된 모듈을 참조할 것.
         train_ratio: 학습 데이터의 비율, 정수. 내부적으로는 R / (R + D + T)로 계산한다.
         dev_ratio: 개발 데이터의 비율, 정수. 내부적으로는 D / (R + D + T)로 계산한다.
         test_ratio: 테스트 데이터의 비율, 정수. 내부적으로는 T / (R + D + T)로 계산한다.
