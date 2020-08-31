@@ -22,3 +22,6 @@
 - [main.py, dset, text_ox, /home/kur/dev/szmc/SZMC_DSET/text_ox, random_select, '7',
   '2', '1', crop_note/pp5_10_15_20_25_30.h256w256.h_pad.n4140.yml, /home/kur/dev/szmc/SZMC_DATA/manga109,
   '#280d2a6d623625f7bc40244c8534cb81e4240458']
+- [main.py, dset, text_ox, /home/kur/dev/szmc/SZMC_DSET/text_ox, random_select, '7',
+  '2', '1', crop_note/pp5_10_15_20_25_30.h256w256.h_pad.n4140.yml, /home/kur/dev/szmc/SZMC_DATA/manga109,
+  '#9970299800b5ef2b16bccd4ae3e13b889e1940cc']
