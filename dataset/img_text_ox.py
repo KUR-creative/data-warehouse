@@ -290,5 +290,7 @@ def _generate(dset_yml_incomplete,
     out_dic = F.merge(meta_dic, rdt_dic)
 
     # Save dataset to file.
+    if dset_file_path.exists():
+        exit('ABORT: Same named dset.yml already exists!')
     dset_file_path.write_text(
         yaml.dump(out_dic, allow_unicode=True, sort_keys=False))
