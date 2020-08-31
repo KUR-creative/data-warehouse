@@ -25,3 +25,5 @@
 - [main.py, dset, text_ox, /home/kur/dev/szmc/SZMC_DSET/text_ox, random_select, '7',
   '2', '1', crop_note/pp5_10_15_20_25_30.h256w256.h_pad.n4140.yml, /home/kur/dev/szmc/SZMC_DATA/manga109,
   '#9970299800b5ef2b16bccd4ae3e13b889e1940cc']
+- [main.py, out, text_ox, tfrecord, /home/kur/dev/szmc/SZMC_DSET/text_ox/DSET/img.has_text.h256w256.0_2898.0_828.0_414.yml,
+  '#41969f2774148fe1fbebe3fcef2aea4715d1da69']
