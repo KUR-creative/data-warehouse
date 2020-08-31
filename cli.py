@@ -145,7 +145,10 @@ class dset(object):
         dev_ratio: 개발 데이터의 비율, 정수. 내부적으로는 D / (R + D + T)로 계산한다.
         test_ratio: 테스트 데이터의 비율, 정수. 내부적으로는 T / (R + D + T)로 계산한다.
         rel_file_name: data_source_dir/RELS에 존재하는 yml 중 처리하길 원하는 파일의 이름.
-        data_source_dirs: 처리를 원하는 데이터 소스들 리스트.
+                       만일 RELS 아래 폴더에 포함된 파일이면, 폴더 또한 경로에 포함한다.
+                       즉 RELS에 상대적인 경로이다. 
+        *data_source_dirs: 처리를 원하는 데이터 소스들(DATA, META, RELS 포함). 하나 이상이 포함될 수 있다.
+                           RELS 아래에 REL_FILE_NAME을 만족하는 파일이 있어야 한다.
         note: 이 작업에 대한 추가적인 설명.
         logging: False일 경우 로깅하지 않음
         '''

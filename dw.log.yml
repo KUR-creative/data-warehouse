@@ -19,3 +19,6 @@
   '256', '256', /home/kur/dev/szmc/SZMC_DATA/manga109/DATA/crop/pp5_10_15_20_25_30.h256w256.h_pad.strict_hw/,
   /home/kur/dev/szmc/SZMC_DATA/manga109/DATA/crop_note/pp5_10_15_20_25_30.h256w256.h_pad.strict_hw,
   '#4350fb8e0977dc415c782f3a966e9bf0d34428e9']
+- [main.py, dset, text_ox, /home/kur/dev/szmc/SZMC_DSET/text_ox, random_select, '7',
+  '2', '1', crop_note/pp5_10_15_20_25_30.h256w256.h_pad.n4140.yml, /home/kur/dev/szmc/SZMC_DATA/manga109,
+  '#280d2a6d623625f7bc40244c8534cb81e4240458']
