@@ -314,9 +314,6 @@ def merge(merged_out_dir, *dset_yml_paths):
     h,w = hws[0]
     
     merged = merge_dset.do(*dset_yml_paths)
-    from pprint import pprint
-    #pprint(F.omit(md, ['TRAIN', 'DEV', 'TEST']))
-    pprint(merged)
 
     ver_str = version_string(merged)
     merged_file_path = Path(
