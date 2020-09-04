@@ -63,7 +63,7 @@ def write_text(path, text, mode=0o777, exist_ok=True):
 
 def read_text(path, encoding=None, errors=None):
     ''' If encoding = 'AUTO', then detect encoding. '''
-    if encoding is 'AUTO':
+    if encoding == 'AUTO':
         with open(path, 'rb') as f:
             rawdata = f.read()
             encoding = chardet.detect(rawdata)['encoding']
