@@ -98,7 +98,7 @@ def annotate_text_ox(data_source, crop_h, crop_w,
         'num_no_text': len(fp.lremove(F.second, path_tfs))},
     'RELATIONS': {f'img_path.has_text.h{h}w{w}': path_tfs}}
 
-    rel_file_name = fu.stem(crop_dir) + f'.n{n_notes}.yml'
+    rel_file_name = fu.name(crop_dir) + f'.n{n_notes}.yml'
     rel_parent = Path(data_source, 'RELS', 'crop_note')
     
     # Save relation
