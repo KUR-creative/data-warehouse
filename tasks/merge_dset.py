@@ -36,7 +36,7 @@ def do(*dset_paths):
     #etc.inplace_shuffled(test)
     
     return dict(
-        MERGED_DATASETS = dset_paths,
+        MERGED_DATASETS = list(dset_paths),
         DATA_SOURCES = F.lmapcat(
             lambda d: d['DATA_SOURCES'], dics),
         DESCRIPTION = dict(
