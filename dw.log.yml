@@ -27,3 +27,9 @@
   '#9970299800b5ef2b16bccd4ae3e13b889e1940cc']
 - [main.py, out, text_ox, tfrecord, /home/kur/dev/szmc/SZMC_DSET/text_ox/DSET/img.has_text.h256w256.0_2898.0_828.0_414.yml,
   '#41969f2774148fe1fbebe3fcef2aea4715d1da69']
+- [main.py, data, annotate_text_ox, via_json, /home/kur/dev/szmc/SZMC_DATA/snet285,
+  '256', '256', /home/kur/dev/szmc/SZMC_DATA/snet285/DATA/crop/image.h256w256, /home/kur/dev/szmc/SZMC_DATA/snet285/DATA/crop_note/image.h256w256,
+  '#93471e0c5efca7affb0e75f48d48c6b767251594']
+- [main.py, dset, text_ox, /home/kur/dev/szmc/SZMC_DSET/text_ox/, random_select, '7',
+  '2', '1', crop_note/image.h256w256.n3080.yml, /home/kur/dev/szmc/SZMC_DATA/snet285,
+  '#93471e0c5efca7affb0e75f48d48c6b767251594']
