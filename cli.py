@@ -10,6 +10,8 @@ from utils import file_utils as fu
 from utils.etc_utils import git_hash
 
 def assert_valid_data_source(data_src_dir_path):
+    assert Path(data_src_dir_path).exists()
+    assert Path(data_src_dir_path).is_absolute()
     assert Path(data_src_dir_path, 'DATA').exists()
     assert Path(data_src_dir_path, 'META').exists()
     assert Path(data_src_dir_path, 'RELS').exists()
