@@ -45,8 +45,8 @@ def select(at, path=None):
 def extension(path):
     return Path(path).suffix.replace('.','',1)
 
-def stem(path):
-    return Path(path).stem
+def stem(path): return Path(path).stem
+def name(path): return Path(path).name
     
 #---------------------------------------------------------------
 def human_sorted(iterable):
@@ -63,7 +63,7 @@ def write_text(path, text, mode=0o777, exist_ok=True):
 
 def read_text(path, encoding=None, errors=None):
     ''' If encoding = 'AUTO', then detect encoding. '''
-    if encoding is 'AUTO':
+    if encoding == 'AUTO':
         with open(path, 'rb') as f:
             rawdata = f.read()
             encoding = chardet.detect(rawdata)['encoding']
