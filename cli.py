@@ -9,12 +9,17 @@ from dataset import img_text_ox
 from utils import file_utils as fu
 from utils.etc_utils import git_hash
 
-def assert_valid_data_source(dir_path):
-    assert Path(dir_path).exists()
-    assert Path(dir_path).is_absolute()
-    assert Path(dir_path, 'DATA').exists()
-    assert Path(dir_path, 'META').exists()
-    assert Path(dir_path, 'RELS').exists()
+def assert_valid_data_source(data_src_dir_path):
+    assert Path(data_src_dir_path, 'DATA').exists()
+    assert Path(data_src_dir_path, 'META').exists()
+    assert Path(data_src_dir_path, 'RELS').exists()
+
+def assert_valid_dset_directory(dset_dir_path):
+    assert Path(dset_dir_path).exists()
+    assert Path(dset_dir_path).is_absolute()
+    assert Path(dset_dir_path, 'DSET').exists()
+    assert Path(dset_dir_path, 'META').exists()
+    assert Path(dset_dir_path, 'OUTS').exists()
 
 def check_and_write_dw_log(logging):
     ''' Convenient helper func to log dw.log.yml '''
@@ -153,6 +158,7 @@ class dset(object):
         note: 이 작업에 대한 추가적인 설명.
         logging: False일 경우 로깅하지 않음
         '''
+        assert_valid_dset_directory(out_dset_dir)
         assert len(data_source_dirs) > 0
         img_text_ox.generate(
             out_dset_dir, select,
@@ -197,6 +203,8 @@ class out(object):
         out_path = str(
             Path(out_path).resolve() if out_path else
             dset_root / 'OUTS' / f'{dp.stem}.{out_form}')
+        if not out_path:
+            assert_valid_dset_directory(dset_root)
 
         img_text_ox.output(dset_path, out_path)
 
