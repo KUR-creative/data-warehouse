@@ -318,7 +318,7 @@ def merge(merged_out_dir, *dset_yml_paths):
     ver_str = version_string(merged)
     merged_file_path = Path(
         merged_out_dir, 'DSET',
-        f'merged.img.has_text.h{h}w{w}.' + ver_str)
+        f'merged.img.has_text.h{h}w{w}' + ver_str)
     if merged_file_path.exists():
         exit('ABORT: Same named dset.yml already exists!')
     merged_file_path.write_text(
