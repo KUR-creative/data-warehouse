@@ -19,9 +19,9 @@ def do(*dset_paths):
             dics.append(yaml.safe_load(f))
 
     for path,dic in zip(dset_paths,dics):
-        assert dic.get('TRAIN'), f'{path} has no key: TRAIN'
-        assert dic.get('DEV'), f'{path} has no key: DEV'
-        assert dic.get('TEST'), f'{path} has no key: TEST'
+        assert dic.get('TRAIN') is not None, f'{path} has no key: TRAIN'
+        assert dic.get('DEV') is not None, f'{path} has no key: DEV'
+        assert dic.get('TEST') is not None, f'{path} has no key: TEST'
     # Merge
     train = F.lmapcat(lambda d: d['TRAIN'], dics)
     dev = F.lmapcat(lambda d: d['DEV'], dics)
