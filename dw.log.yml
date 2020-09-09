@@ -38,3 +38,11 @@
   '#85feb08493b66258ab229d60b74ef2fe5af66c3a']
 - [main.py, out, text_ox, tfrecord, /home/kur/dev/szmc/SZMC_DSET/text_ox/DSET/merged.img.has_text.h256w256..0_5054.0_1444.0_722.yml,
   '#85feb08493b66258ab229d60b74ef2fe5af66c3a']
+- [main.py, dset, text_ox, /home/kur/dev/szmc/SZMC_DSET/text_ox, random_select, '1',
+  '0', '0', text_ox.auto.h256w256.v1.yml, /home/kur/dev/szmc/SZMC_DATA/v0data/m101,
+  /home/kur/dev/szmc/SZMC_DATA/v0data/school, '#99ed5bf37a6ec72bc7ed206a0ff0f6d91884ebca']
+- [main.py, dset, merge, img_text_ox, /home/kur/dev/szmc/SZMC_DSET/text_ox, /home/kur/dev/szmc/SZMC_DSET/text_ox/DSET/img.has_text.h256w256.0_3520.0_0.0_0.yml,
+  /home/kur/dev/szmc/SZMC_DSET/text_ox/DSET/merged.img.has_text.h256w256..0_5054.0_1444.0_722.yml,
+  '#99ed5bf37a6ec72bc7ed206a0ff0f6d91884ebca']
+- [main.py, out, text_ox, tfrecord, /home/kur/dev/szmc/SZMC_DSET/text_ox/DSET/merged.img.has_text.h256w256..0_8574.0_1444.0_722.yml,
+  '#41b98339aeba2e13eb97655e1def9b70afa07b0b']
