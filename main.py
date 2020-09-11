@@ -1,4 +1,9 @@
-''' Constantly changing for testing a modules. Just ignore it. '''
+''' Constantly changing to test modules. Just ignore it. '''
+import fire
+import cli
+if __name__ == '__main__':
+    fire.Fire(cli.interface)
+
 
 #img_dir = '../SZMC_DATA/v0data/m101/prev_images/'
 #mask_dir = '../SZMC_DATA/v0data/m101/mask1bit/'
@@ -105,7 +110,27 @@ for _ in dic['test']:
 assert n == dic['num_test']
 
 '''
-import fire
-import cli
-if __name__ == '__main__':
-    fire.Fire(cli.interface)
+
+'''
+p1 = '../SZMC_DSET/text_ox/DSET/img.has_text.h256w256.0_2156.0_616.0_308.yml'
+p2 = '../SZMC_DSET/text_ox/DSET/img.has_text.h256w256.0_2463.0_703.0_354.yml'
+p3 = '../SZMC_DSET/text_ox/DSET/img.has_text.h256w256.0_2898.0_828.0_414.yml'
+
+import funcy as F
+import yaml
+from pprint import pprint
+
+from dataset import default
+
+with open(p1) as f:
+    dic1 = yaml.safe_load(f)
+with open(p3) as f:
+    dic3 = yaml.safe_load(f)
+pprint(F.omit(dic1, ['TRAIN', 'DEV', 'TEST']))
+pprint(F.omit(dic3, ['TRAIN', 'DEV', 'TEST']))
+md = default.merge(p1, p3)
+pprint(F.omit(md, ['TRAIN', 'DEV', 'TEST']), sort_dicts=False)
+
+from dataset import img_text_ox
+img_text_ox.merge('../SZMC_DSET/text_ox', p1, p3)
+'''

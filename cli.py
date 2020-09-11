@@ -169,6 +169,27 @@ class dset(object):
         
         check_and_write_log(logging, out_dset_dir)
         check_and_write_dw_log(logging)
+
+    @staticmethod
+    def merge(module, out_dset_dir, *dset_yml_paths,
+              note=None, logging=True):
+        '''
+        데이터셋 여럿을 합친 데이터셋 생성
+        
+        args:
+        module: 합쳐진 데이터셋의 이름과 기타 등등을 결정하는 모듈
+        out_dset_dir: 생성한 데이터셋 yml 파일이 RELS 아래에 저장되는 (DSET, META, OUTS)을 포함하는 폴더.
+        *dset_yml_paths: 합치려는 데이터셋들의 yml 경로들
+        note: 이 작업에 대한 추가적인 설명.
+        logging: False일 경우 로깅하지 않음
+        '''
+        assert_valid_dset_directory(out_dset_dir)
+        
+        m = import_module(f'dataset.{module}', 'dataset')
+        m.merge(out_dset_dir, *dset_yml_paths)
+        
+        check_and_write_log(logging, out_dset_dir)
+        check_and_write_dw_log(logging)
                    
 class out(object):
     ''' Export dataset as learnable artifact(s) '''

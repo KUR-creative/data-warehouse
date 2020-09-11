@@ -12,11 +12,13 @@ from tqdm import tqdm
 import yaml
 
 from utils import fp
+from utils import file_utils as fu
 from utils import etc_utils as etc
 from core.split_rdt import rdt_nums, rdt_partition
 from out.tfrecord import _bytes, _int64
 import core
 import core.name
+from tasks import merge_dset
 
 
 #---------------------------------------------------------------
@@ -236,6 +238,15 @@ def make_abspath(data_source, relation): # TODO: Need tests
     else:
         return relation
     
+def version_string(rdt_dic, revision_rdt=(0,0,0)):
+    r_train, r_dev, r_test = revision_rdt # r: revision
+    n_train = len(rdt_dic['TRAIN']) # n: num (size)
+    n_dev = len(rdt_dic['DEV'])
+    n_test = len(rdt_dic['TEST'])
+    return( f'.{r_train}_{n_train}'
+          + f'.{r_dev}_{n_dev}'
+          + f'.{r_test}_{n_test}.yml')
+
 # Can be refactored later..
 def _generate(dset_yml_incomplete,
               select_fn, RDT_ratio,
@@ -294,3 +305,21 @@ def _generate(dset_yml_incomplete,
         exit('ABORT: Same named dset.yml already exists!')
     dset_file_path.write_text(
         yaml.dump(out_dic, allow_unicode=True, sort_keys=False))
+
+def merge(merged_out_dir, *dset_yml_paths):
+    ''' merged_out_path <= *dset_yml_paths '''
+    hws = fp.lmap(fp.pipe(fu.name, core.name.h_w),
+                  dset_yml_paths)
+    assert fp.equal(*hws) # All same (h,w)
+    h,w = hws[0]
+    
+    merged = merge_dset.do(*dset_yml_paths)
+
+    ver_str = version_string(merged)
+    merged_file_path = Path(
+        merged_out_dir, 'DSET',
+        f'merged.img.has_text.h{h}w{w}' + ver_str)
+    if merged_file_path.exists():
+        exit('ABORT: Same named dset.yml already exists!')
+    merged_file_path.write_text(
+        yaml.dump(merged, allow_unicode=True, sort_keys=False))
