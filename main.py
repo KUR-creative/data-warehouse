@@ -1,17 +1,31 @@
 ''' Constantly changing to test modules. Just ignore it. '''
+'''
 import fire
 import cli
 if __name__ == '__main__':
     fire.Fire(cli.interface)
+'''
 
 
 #img_dir = '../SZMC_DATA/v0data/m101/prev_images/'
 #mask_dir = '../SZMC_DATA/v0data/m101/mask1bit/'
 #gen_crops.do(img_dir, 512, 512)
 #gen_crops.do(mask_dir, 512, 512)
-root = '../SZMC_DATA/v0data/m101/DATA'
 #szmc_v0.gen_crops(root, 512, 512)
 #szmc_v0.save_crops(root, 256, 256)
+
+from utils import file_utils as fu
+from tasks import map_imgs
+from pprint import pprint
+src_dir = '../SZMC_DATA/snet285/DATA/clean_wk'
+dst_dir = '../SZMC_DATA/snet285/DATA/clean_wk.ch0'
+exist_ok = True
+
+#pairs = map_imgs.one_bit_masks(fu.descendants(src_dir), dst_dir)
+#ps = fu.descendants(src_dir)+ fu.descendants('../SZMC_DATA/snet285/DATA/image')
+#pairs = map_imgs.one_bit_masks(ps)
+pairs = map_imgs.one_bit_masks(fu.descendants(src_dir))
+pprint(pairs)
 
 
 '''
