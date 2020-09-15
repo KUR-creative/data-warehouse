@@ -28,6 +28,6 @@ def mask1bit_dstpath_pairseq(src_root, dst_root=None, which=0):
     maskseq = (iu.cv.read_rgb(p)[:,:,which].astype(bool)
                                            .astype('uint8')
                for p in src_paths)
-    dst_pathseq = (Path(p).with_suffix('.png')
+    dst_pathseq = (str(Path(p).with_suffix('.png'))
                    for p in raw_dst_paths)
     return zip(maskseq, dst_pathseq)
