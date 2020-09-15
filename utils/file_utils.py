@@ -10,19 +10,6 @@ import chardet
 import funcy as F
 
 #---------------------------------------------------------------
-def copy_dirtree(src, dst, **kwargs):
-    ''' 
-    Copy all directories under src dir path, except files.
-    If dst is not exists, it creates directory path.
-    (if a/b/c/, then all of directories created!)
-    
-    See help(shutil.copytree) for kwargs if you want.
-    '''
-    def ignore(dir, files):
-        return [f for f in files if Path(dir, f).is_file()]
-    shutil.copytree(src, dst, ignore=ignore, **kwargs)
-    
-#---------------------------------------------------------------
 def children(dirpath):
     ''' Return children file path list of `dirpath` '''
     parent = Path(dirpath)
@@ -39,6 +26,49 @@ def descendants(root_dirpath):
         for path in map(lambda name:PurePosixPath(root) / name,files):
             fpaths.append(str(path))
     return fpaths
+
+#---------------------------------------------------------------
+def copy_dirtree(src, dst, **kwargs):
+    ''' 
+    Copy all directories under src dir path, except files.
+    If dst is not exists, it creates directory path.
+    (if a/b/c/, then all of directories created!)
+    
+    See help(shutil.copytree) for kwargs if you want.
+    '''
+    def ignore(dir, files):
+        return [f for f in files if Path(dir, f).is_file()]
+    shutil.copytree(src, dst, ignore=ignore, **kwargs)
+
+def copy_path_pairs(src_root, dst_root):
+    '''
+    Generate [[src-path dst-path]]. 
+    [src-path] is descendants of src_root.
+     ex) src_root/a/b src_root/a/c src_root/a src_root/a/bc/d
+    [dst-path] is src-path with root replaced by dst_root.
+     ex) dst_root/a/b dst_root/a/c dst_root/a dst_root/a/bc/d
+
+    Note: Before copying files using return list from this func, 
+    call copy_dirtree first to ensure each directory exists.
+    
+    args: str or Path like object
+    return: [[src-path dst-path]]. All atom is str.
+    '''
+    src_root = Path(src_root)
+    dst_root = Path(dst_root)
+    src_paths = [Path(p) for p in descendants(src_root)]
+    rel_paths = [p.relative_to(src_root) for p in src_paths]
+    dst_paths = [dst_root / p for p in rel_paths]
+    return [[str(src), str(dst)]
+            for src, dst in zip(src_paths, dst_paths)]
+
+#pairs = copy_path_pairs('.', './tmp/asdf')# special case? # paths have no root(not presented)..
+#pairs = copy_path_pairs('../__pycache__', 'bbap')
+#pairs = copy_path_pairs('/boot/grub', './tmp')
+#pairs = copy_path_pairs('./__pycache__/', 'a/b/c/d/e')
+#pairs = copy_path_pairs('noexists', './tmp') # no paths case
+#from pprint import pprint
+#pprint(pairs)
 
 #---------------------------------------------------------------
 @F.autocurry
