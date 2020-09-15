@@ -31,8 +31,8 @@ Dataset is configured data things or relations from data.
 `Logics to generate trainable artifact` \
 Out(put) is trainable representation of dataset.
 
-## Miscellaneous
+## Interface
 `cli.py` command line interface. Run `python main.py` to see
-all commands.
+all commands. cli command calls funtions in entity modules.
 
 `main.py` entry point. Call cli or tmp code for testing.
