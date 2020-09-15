@@ -56,6 +56,19 @@ class data(object):
                        exist_ok=False,
                        note=None, logging=True):
         '''
+        마스크가 저장된 디렉토리 mask_dir에서 마스크를 로드(rgb)하여 
+        channel을 잘라내고 dst_dir에 저장한다.
+        
+        mask_dir 내부에 존재하는 모든 마스크가 재귀적으로 로드된다.
+        mask_dir 내부 디렉토리 구조 또한 복사된다.
+        dst_dir이 존재하지 않으면 새로 생성된다.
+        dst_dir=None이면 {mask_dir}.ch{channel}로 이름이 붙는다.
+        
+        args:
+        mask_dir: 마스크들이 저장된 폴더의 경로. 
+        dst_dir: 1bit 마스크를 저장할 폴더의 경로. 기본: {mask_dir}.ch{channel}
+        channel: 이미지에서 잘라낼 채널. [0,1,2] 중 선택(rgb)
+        exist_ok: dst_dir이 존재해도 처리를 할지 결정. 기본: False
         '''
         if dst_dir is None:
             src = str(Path(mask_dir)) # Remove path sep thingy
