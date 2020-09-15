@@ -1,20 +1,33 @@
 from pathlib import Path
 
-def one_bit_masks(src_paths, crop_dir=None, which=0):
+from utils import file_utils as fu
+from utils import fp
+from utils import image_utils as iu
+
+def mask1bit_dstpath_pairseq(src_root, dst_root=None, which=0):
     ''' 
-    crop_dir is directory path to save generated crops.
+    Generate <[1bit-mask, dst-path]>.
     
-    If None, crop_dir is 
-    {common parent dir path of src_paths}.ch{which}
+    1bit means 0/1 mask. Actual dtype is 'uint8'.
     
-    ex) common dir = ../SZMC_DATA/masks, crop_dir = None, which=0
-     =>   crop_dir = ../SZMC_DATA/masks.ch0
+    dst_root is root directory path to save generated crops.
+    If None, dst_root is '{src_root}.ch{which}'
     
-    return: [[path, 1bit-mask]]. 
+    which is channel of image to extract. 
+    0 means red channel(in rgb scheme).
+    
+    ex) src_root = ../SZMC_DATA/masks, dst_root = None, which=0
+     => dst_root = ../SZMC_DATA/masks.ch0
     '''
-    from pprint import pprint
-    if crop_dir is None:
-        parents = set(Path(p).parent for p in src_paths)
-        assert len(parents) == 1, \
-            'No common parents of src_paths. crop_dir=None is not allowed'
-    pprint(src_paths)
+    if dst_root is None:
+        src = str(Path(src_root)) # Remove path sep thingy
+        dst_root = f'{src}.ch{which}'
+    src_paths, raw_dst_paths = fp.unzip(
+        fu.copy_path_pairs(src_root, dst_root))
+    
+    maskseq = (iu.cv.read_rgb(p)[:,:,which].astype(bool)
+                                           .astype('uint8')
+               for p in src_paths)
+    dst_pathseq = (Path(p).with_suffix('.png')
+                   for p in raw_dst_paths)
+    return zip(maskseq, dst_pathseq)
