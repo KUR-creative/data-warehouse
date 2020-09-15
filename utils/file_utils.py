@@ -2,12 +2,26 @@
 Utils for File Processing
 '''
 import os
-import re
 from pathlib import PurePosixPath, Path
+import re
+import shutil
 
 import chardet
 import funcy as F
 
+#---------------------------------------------------------------
+def copy_dirtree(src, dst, **kwargs):
+    ''' 
+    Copy all directories under src dir path, except files.
+    If dst is not exists, it creates directory path.
+    (if a/b/c/, then all of directories created!)
+    
+    See help(shutil.copytree) for kwargs if you want.
+    '''
+    def ignore(dir, files):
+        return [f for f in files if Path(dir, f).is_file()]
+    shutil.copytree(src, dst, ignore=ignore, **kwargs)
+    
 #---------------------------------------------------------------
 def children(dirpath):
     ''' Return children file path list of `dirpath` '''

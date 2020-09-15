@@ -14,6 +14,7 @@ if __name__ == '__main__':
 #szmc_v0.gen_crops(root, 512, 512)
 #szmc_v0.save_crops(root, 256, 256)
 
+'''
 from utils import file_utils as fu
 from tasks import map_imgs
 from pprint import pprint
@@ -26,7 +27,17 @@ exist_ok = True
 #pairs = map_imgs.one_bit_masks(ps)
 pairs = map_imgs.one_bit_masks(fu.descendants(src_dir))
 pprint(pairs)
+'''
 
+# Read from input
+
+import shutil
+from utils import file_utils as fu
+
+src = '../SZMC_DATA/snet285/'
+dst = '../SZMC_DATA/a/tmp'
+
+fu.copy_dirtree(src, dst);
 
 '''
 import yaml
