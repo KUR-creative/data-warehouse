@@ -1,9 +1,9 @@
 ''' Constantly changing to test modules. Just ignore it. '''
-'''
 import fire
 import cli
 if __name__ == '__main__':
     fire.Fire(cli.interface)
+'''
 '''
 
 
@@ -14,18 +14,19 @@ if __name__ == '__main__':
 #szmc_v0.gen_crops(root, 512, 512)
 #szmc_v0.save_crops(root, 256, 256)
 
+'''
 from utils import file_utils as fu, fp
 from tasks import map_imgs
 from pprint import pprint
 src_dir = '../SZMC_DATA/snet285/DATA/clean_wk'
-dst_dir = '../SZMC_DATA/snet285/DATA/clean_wk.ch0'
+dst_dir = '../SZMC_DATA/snet285/DATA/clean_wk_dst'
 exist_ok = True
 
 #pairs = map_imgs.one_bit_masks(fu.descendants(src_dir), dst_dir)
 #ps = fu.descendants(src_dir)+ fu.descendants('../SZMC_DATA/snet285/DATA/image')
 #pairs = map_imgs.one_bit_masks(ps)
+#pairs = map_imgs.mask1bit_dstpath_pairseq(src_dir, dst_dir)
 pairs = map_imgs.mask1bit_dstpath_pairseq(src_dir)
-pprint(pairs)
 
 import cv2
 for i, p in pairs:
@@ -37,6 +38,7 @@ _, ps = fp.unzip(pairs)
 print(len(ps))
 '''
 
+'''
 # Read from input
 
 import shutil
