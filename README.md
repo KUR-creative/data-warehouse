@@ -7,13 +7,14 @@ Data Manipulation System for SickZil-Machine
 Reusable (pure) functions **for any circumstance**.
 
 ### core
-Reusable pure functions just **for this project**. \
-core functions DO NOT HAVE side-effects!
+Reusable small and simple (pure) functions just **for this project**. \
+core functions could not have side-effects...
+Side-effects are discouraged. 
 
 ### tasks
-Reusable functions across **Entity modules** \
-tasks functions can read or write files or something... 
-Side-effect allowed.
+Reusable more big functions across **Entity modules**. \
+Tasks functions can read or write files or something... 
+Side-effect are allowed, but generally discouraged.
 
 ## Entity Modules
 
@@ -33,6 +34,7 @@ Out(put) is trainable representation of dataset.
 
 ## Interface
 `cli.py` command line interface. Run `python main.py` to see
-all commands. cli command calls funtions in entity modules.
+all commands. cli command calls funtions in entity modules. \
+Some simple command can call tasks.functions directly.
 
 `main.py` entry point. Call cli or tmp code for testing.
