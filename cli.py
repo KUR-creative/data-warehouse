@@ -21,7 +21,7 @@ def assert_valid_data_source(data_src_dir_path):
     assert Path(data_src_dir_path, 'META').exists()
     assert Path(data_src_dir_path, 'RELS').exists()
 
-def assert_valid_dset_directory(dset_dir_path):
+def assert_valid_dset_root(dset_dir_path):
     assert Path(dset_dir_path).exists()
     assert Path(dset_dir_path).is_absolute()
     assert Path(dset_dir_path, 'DSET').exists()
@@ -174,8 +174,9 @@ class data(object):
 
 class dset(object):
     ''' Generate and Save dataset from data-sources '''
+
     @staticmethod
-    def text_ox(out_dset_dir, select,
+    def text_ox(dset_root, select,
                 train_ratio, dev_ratio, test_ratio,
                 rel_file_name, *data_source_dirs,
                 note=None, logging=True):
@@ -188,7 +189,7 @@ class dset(object):
         저장한다.
         
         args:
-        out_dset_dir: 생성한 데이터셋 yml 파일이 저장되는 DSET, META, OUTS을 포함하는 폴더.
+        dset_root: 생성한 데이터셋 yml 파일이 저장되는 DSET, META, OUTS을 포함하는 폴더.
         select: tRain/Dev/Test를 선택하는 함수. 현재 random_select만 지원. 
                 SELECT_FN이 정의된 모듈을 참조할 것.
         train_ratio: 학습 데이터의 비율, 정수. 내부적으로는 R / (R + D + T)로 계산한다.
@@ -202,35 +203,41 @@ class dset(object):
         note: 이 작업에 대한 추가적인 설명.
         logging: False일 경우 로깅하지 않음
         '''
-        assert_valid_dset_directory(out_dset_dir)
+        assert_valid_dset_root(dset_root)
         assert len(data_source_dirs) > 0
         img_text_ox.generate(
-            out_dset_dir, select,
+            dset_root, select,
             (train_ratio, dev_ratio, test_ratio),
             rel_file_name, *data_source_dirs)
         
-        check_and_write_log(logging, out_dset_dir)
+        check_and_write_log(logging, dset_root)
         check_and_write_dw_log(logging)
+        
+    @staticmethod
+    def image_only(img_root, select='random_select'):
+        print(img_root)
+        data_source = core.path.data_source(img_root)
+        assert_valid_data_source(data_source)
 
     @staticmethod
-    def merge(module, out_dset_dir, *dset_yml_paths,
+    def merge(module, dset_root, *dset_yml_paths,
               note=None, logging=True):
         '''
         데이터셋 여럿을 합친 데이터셋 생성
         
         args:
         module: 합쳐진 데이터셋의 이름과 기타 등등을 결정하는 모듈
-        out_dset_dir: 생성한 데이터셋 yml 파일이 RELS 아래에 저장되는 (DSET, META, OUTS)을 포함하는 폴더.
+        dset_root: 생성한 데이터셋 yml 파일이 RELS 아래에 저장되는 (DSET, META, OUTS)을 포함하는 폴더.
         *dset_yml_paths: 합치려는 데이터셋들의 yml 경로들
         note: 이 작업에 대한 추가적인 설명.
         logging: False일 경우 로깅하지 않음
         '''
-        assert_valid_dset_directory(out_dset_dir)
+        assert_valid_dset_root(dset_root)
         
         m = import_module(f'dataset.{module}', 'dataset')
-        m.merge(out_dset_dir, *dset_yml_paths)
+        m.merge(dset_root, *dset_yml_paths)
         
-        check_and_write_log(logging, out_dset_dir)
+        check_and_write_log(logging, dset_root)
         check_and_write_dw_log(logging)
                    
 class out(object):
@@ -269,7 +276,7 @@ class out(object):
             Path(out_path).resolve() if out_path else
             dset_root / 'OUTS' / f'{dp.stem}.{out_form}')
         if not out_path:
-            assert_valid_dset_directory(dset_root)
+            assert_valid_dset_root(dset_root)
 
         img_text_ox.output(dset_path, out_path)
 
