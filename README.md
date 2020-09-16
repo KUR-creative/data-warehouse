@@ -24,6 +24,10 @@ Data is raw data or relations(of data) from data source
 or external dataset. Some selected element(or atom) of data 
 consists dataset.
 
+If the relations of data is implicitly expressed through 
+directory structure and file name, explicit data representation
+(yaml, json) is not added to the data.
+
 ### dataset
 `Logics to add / generate dataset.` \
 Dataset is configured data things or relations from data.
