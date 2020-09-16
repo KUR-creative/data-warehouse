@@ -3,16 +3,52 @@ import fire
 import cli
 if __name__ == '__main__':
     fire.Fire(cli.interface)
+'''
+'''
 
 
 #img_dir = '../SZMC_DATA/v0data/m101/prev_images/'
 #mask_dir = '../SZMC_DATA/v0data/m101/mask1bit/'
 #gen_crops.do(img_dir, 512, 512)
 #gen_crops.do(mask_dir, 512, 512)
-root = '../SZMC_DATA/v0data/m101/DATA'
 #szmc_v0.gen_crops(root, 512, 512)
 #szmc_v0.save_crops(root, 256, 256)
 
+'''
+from utils import file_utils as fu, fp
+from tasks import map_imgs
+from pprint import pprint
+src_dir = '../SZMC_DATA/snet285/DATA/clean_wk'
+dst_dir = '../SZMC_DATA/snet285/DATA/clean_wk_dst'
+exist_ok = True
+
+#pairs = map_imgs.one_bit_masks(fu.descendants(src_dir), dst_dir)
+#ps = fu.descendants(src_dir)+ fu.descendants('../SZMC_DATA/snet285/DATA/image')
+#pairs = map_imgs.one_bit_masks(ps)
+#pairs = map_imgs.mask1bit_dstpath_pairseq(src_dir, dst_dir)
+pairs = map_imgs.mask1bit_dstpath_pairseq(src_dir)
+
+import cv2
+for i, p in pairs:
+    print(p)
+    cv2.imshow('i', i * 255); cv2.waitKey(0)
+    
+pairs = map_imgs.mask1bit_dstpath_pairseq(src_dir)
+_, ps = fp.unzip(pairs)
+print(len(ps))
+'''
+
+'''
+# Read from input
+
+import shutil
+from utils import file_utils as fu
+
+src = '../SZMC_DATA/snet285/'
+dst = '../SZMC_DATA/a/tmp'
+
+fu.copy_dirtree(src, dst);
+'''
 
 '''
 import yaml

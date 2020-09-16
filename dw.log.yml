@@ -46,3 +46,9 @@
   '#99ed5bf37a6ec72bc7ed206a0ff0f6d91884ebca']
 - [main.py, out, text_ox, tfrecord, /home/kur/dev/szmc/SZMC_DSET/text_ox/DSET/merged.img.has_text.h256w256..0_8574.0_1444.0_722.yml,
   '#41b98339aeba2e13eb97655e1def9b70afa07b0b']
+- [main.py, data, gen_1bit_masks, /home/kur/dev/szmc/SZMC_DATA/snet285/DATA/clean_wk,
+  '#b4dcc07c06c9003213557cce478b39aa163e0120']
+- [main.py, data, gen_1bit_masks, /home/kur/dev/szmc/SZMC_DATA/v0data/m101/DATA/masks,
+  '#b4a9beebbb9090218a5d0749255cdcaf1a0f1b33']
+- [main.py, data, gen_1bit_masks, /home/kur/dev/szmc/SZMC_DATA/v0data/school/DATA/masks,
+  '#b4a9beebbb9090218a5d0749255cdcaf1a0f1b33']
