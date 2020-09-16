@@ -52,3 +52,5 @@
   '#b4a9beebbb9090218a5d0749255cdcaf1a0f1b33']
 - [main.py, data, gen_1bit_masks, /home/kur/dev/szmc/SZMC_DATA/v0data/school/DATA/masks,
   '#b4a9beebbb9090218a5d0749255cdcaf1a0f1b33']
+- [main.py, data, canonical_select_file, clean_fmd_comics, /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/RELS/db_fmd_cleans190414_valid.flist,
+  '#17892e9715022bdbadbf5336aa3098472d3146ce']

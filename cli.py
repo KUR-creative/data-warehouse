@@ -170,7 +170,28 @@ class data(object):
         
         check_and_write_log(logging, data_source)
         check_and_write_dw_log(logging)
+        
+    @staticmethod
+    def canonical_select_file(module, select_file, out_path=None,
+                              note=None, logging=True):
+        '''
+        옛 메타 데이터 파일로부터 통일된 형식의 R/D/T 선택 파일을 생성한다.
+        
+        일종의 임시 스크립트이며, 일반적인 명령과는 거리가 멀다.
+        module은 clean_fmd_comics와 old_snet를 쓸 수 있다.
+        
+        이 select 파일을 이용하여 데이터셋을 만들어 학습하면 
+        과거 모델의 실험 결과와 비교할 수 있다.
+        '''
+        data_source = core.path.data_source(select_file)
+        assert_valid_data_source(data_source)
+        
+        m = import_module(f'data.{module}', 'data')
+        m.canonical_select(data_source, select_file, out_path)
 
+        check_and_write_log(logging, data_source)
+        check_and_write_dw_log(logging)
+        
 class dset(object):
     ''' Generate and Save dataset from data-sources '''
 
