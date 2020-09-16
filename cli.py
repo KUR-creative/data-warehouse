@@ -5,7 +5,7 @@ import shutil
 
 import yaml
 
-from dataset import img_text_ox
+from dataset import img_text_ox, img_only
 from utils import file_utils as fu
 from utils import image_utils as iu
 from utils.etc_utils import git_hash
@@ -50,7 +50,6 @@ def write_log(log_path, content):
 
 class data(object):
     ''' Add data to data-sources '''
-    
     @staticmethod
     def gen_1bit_masks(mask_dir, dst_dir=None, channel=0,
                        exist_ok=False,
@@ -214,10 +213,13 @@ class dset(object):
         check_and_write_dw_log(logging)
         
     @staticmethod
-    def image_only(img_root, select='random_select'):
-        print(img_root)
+    def image_only(dset_root, img_root, select='random_select'):
+        # Validate inputs
         data_source = core.path.data_source(img_root)
         assert_valid_data_source(data_source)
+        assert_valid_dset_root(dset_root)
+
+        img_only.gen_and_save(img_root, select)
 
     @staticmethod
     def merge(module, dset_root, *dset_yml_paths,
