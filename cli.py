@@ -235,8 +235,9 @@ class dset(object):
         
     @staticmethod
     # TODO         dset_path - yaml path to save  
-    def image_only(dset_root, img_root,
-                   select='random_select', has_text='?',
+    def image_only(dset_root, dset_name,
+                   img_root, select='random_select', has_text='?',
+                   crop_h=None, crop_w=None,
                    note=None, logging=True):
         # Validate inputs
         data_source = core.path.data_source(img_root)
@@ -244,7 +245,10 @@ class dset(object):
         # TODO: get dset root from dset_path.
         assert_valid_dset_root(dset_root)
 
-        img_only.gen_and_save(img_root, select, has_text)
+        x = img_only.gen_and_save(
+            img_root, select, has_text, crop_h, crop_w)
+        from pprint import pprint
+        pprint(x)
 
     @staticmethod
     def merge(module, dset_root, *dset_yml_paths,
