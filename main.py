@@ -14,7 +14,7 @@ fmd_select = str(Path('../SZMC_DATA/clean_fmd_comics/RELS/old_select_rdt.yml').r
 import cli
 cli.dset.image_only(dset_root, 'fmd', iroot,
                     select=fmd_select, has_text='x',
-                    crop_h=512, crop_w=306)
+                    crop_h=256, crop_w=256)
 '''
 #cli.dset.image_only(dset_root, iroot)
 cli.data.canonical_select_file('clean_fmd_comics', fmd_select)
