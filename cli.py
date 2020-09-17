@@ -234,13 +234,15 @@ class dset(object):
         check_and_write_dw_log(logging)
         
     @staticmethod
-    def image_only(dset_root, img_root, select='random_select'):
+    def image_only(dset_root, img_root,
+                   select='random_select', has_text='?',
+                   note=None, logging=True):
         # Validate inputs
         data_source = core.path.data_source(img_root)
         assert_valid_data_source(data_source)
         assert_valid_dset_root(dset_root)
 
-        img_only.gen_and_save(img_root, select)
+        img_only.gen_and_save(img_root, select, has_text)
 
     @staticmethod
     def merge(module, dset_root, *dset_yml_paths,

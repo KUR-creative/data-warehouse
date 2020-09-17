@@ -1,4 +1,5 @@
 ''' Constantly changing to test modules. Just ignore it. '''
+'''
 import fire
 import cli
 if __name__ == '__main__':
@@ -8,10 +9,13 @@ if __name__ == '__main__':
 from pathlib import Path
 iroot = str(Path('../SZMC_DATA/clean_fmd_comics/DATA/image/').resolve())
 dset_root = str(Path('../SZMC_DSET/image_mask').resolve())
+fmd_select = str(Path('../SZMC_DATA/clean_fmd_comics/RELS/old_select_rdt.yml').resolve())
 
 import cli
+cli.dset.image_only(dset_root, iroot,
+                    select=fmd_select, has_text='x')
+'''
 #cli.dset.image_only(dset_root, iroot)
-fmd_select = str(Path('../SZMC_DATA/clean_fmd_comics/RELS/db_fmd_cleans190414_valid.flist').resolve())
 cli.data.canonical_select_file('clean_fmd_comics', fmd_select)
 '''
 
