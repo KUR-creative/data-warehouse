@@ -5,6 +5,8 @@ from multimethod import overload
 import funcy as F
 
 from utils import image_utils as iu
+import core
+import core.crops
 
 #---------------------------------------------------------------
 # Relation Types
@@ -13,7 +15,7 @@ def base_relation(inp, out, **attrs):
 
 def crop_relation(img, out, img_h, img_w, crop_h, crop_w, yxs,
                   **attrs):
-    return F.merge(inp_out(img, out),
+    return F.merge(base_relation(img, out),
                    {'img_h':img_h, 'img_w':img_w,
                     'crop_h':crop_h, 'crop_w':crop_w,
                     'yxs': yxs},
@@ -43,13 +45,9 @@ def img_hastextstr(path: lambda p: Path(str(p)).exists(),
                    crop_h=None, crop_w=None, **attrs):
     #assert iu.assert_img_path(path)
     img_h, img_w = iu.img_hw(path)
-    '''
-    yxs = 
-    return crop_relation(path, has_text,
-                         img_h, img_w, crop_h, crop_w,
-                         yxs)
-    '''
-    return base_relation(path, has_text)
+    return crop_relation(
+        path, has_text, img_h, img_w, crop_h, crop_w,
+        core.crops.yxs(img_h, img_w, crop_h, crop_w))
 
 @relation.register
 def default(inp, out, crop_h=None, crop_w=None, **attrs):
