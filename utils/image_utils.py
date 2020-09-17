@@ -2,6 +2,20 @@ from typing import Union
 from pathlib import Path
 
 import cv2
+import filetype
+
+
+def assert_img_path(path):
+    kind = filetype.guess(str(path))
+    assert kind is not None, f'filetype.guess({path}) = {kind}'
+    assert kind.mime.split('/')[0] == 'image', \
+        f'filetype.guess({path}) = {kind} != image/*'
+    return path
+
+def is_img_path(path):
+    kind = filetype.guess(str(path))
+    return(kind is not None
+       and kind.mime.split('/')[0] == 'image')
 
 class cv:
     @staticmethod
