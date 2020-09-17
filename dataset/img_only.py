@@ -1,8 +1,10 @@
 from pathlib import Path
 
 import yaml
+import funcy as F
 
 from utils import file_utils as fu
+from utils import fp
 import core
 import core.dataset 
 
@@ -18,15 +20,18 @@ def gen_and_save(img_root, select, has_text):
         raise NotImplementedError('Use random_select')
 
     dic = yaml.safe_load(select_path.read_text())
-    #TODO map dic with relation
-    x = core.dataset.relation(dic['TEST'][0], has_text,
-                              crop_h = 256, crop_w = 256)
+    def rel_dic(path):
+        return core.dataset.relation(
+            path, has_text, crop_h = 256, crop_w = 256)
+    dic = F.update_in(dic, ['TRAIN'], fp.lmap(rel_dic))
+    dic = F.update_in(dic, ['DEV'], fp.lmap(rel_dic))
+    dic = F.update_in(dic, ['TEST'], fp.lmap(rel_dic))
+    #from pprint import pprint
+    #pprint(dic)
+    return dic
     # Extract out crop h/w to cli
     # Add metadata
     # Make name = img_only + ver_str
-
-    from pprint import pprint
-    pprint(x)
 
     #core.dataset.relation('/home/kur/Downloads/GT.zip', has_text)
 

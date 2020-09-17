@@ -38,17 +38,20 @@ def relation(inp, out, crop_h=None, crop_w=None, **attrs):
     
     attrs are additional attribute added to ret dict.
     '''
+    
 @relation.register
-def img_hastextstr(path: lambda p: (type(p) is str or
-                                    isinstance(p, Path)),
-                   has_text: lambda s: s in ('o', 'x', '?'),
-                   crop_h=None, crop_w=None, **attrs):
+def img_only_has_text(path: lambda p: (type(p) is str or
+                                       isinstance(p, Path)),
+                      has_text: lambda s: s in ('o', 'x', '?'),
+                      crop_h=None, crop_w=None, **attrs):
+    ''' Note: has_text is not 'out' in result dict. '''
     #assert iu.assert_img_path(path)
     assert Path(path).exists()
     img_h, img_w = iu.img_hw(path)
     return crop_relation(
-        path, has_text, img_h, img_w, crop_h, crop_w,
-        core.crops.yxs(img_h, img_w, crop_h, crop_w))
+        path, None, img_h, img_w, crop_h, crop_w,
+        core.crops.yxs(img_h, img_w, crop_h, crop_w),
+        has_text = has_text)
 
 @relation.register
 def default(inp, out, crop_h=None, crop_w=None, **attrs):
