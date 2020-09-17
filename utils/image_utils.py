@@ -3,6 +3,7 @@ from pathlib import Path
 
 import cv2
 import filetype
+import imagesize
 
 
 def assert_img_path(path):
@@ -17,6 +18,11 @@ def is_img_path(path):
     return(kind is not None
        and kind.mime.split('/')[0] == 'image')
 
+def img_hw(path):
+    w, h = imagesize.get(assert_img_path(path))
+    assert w != -1 and h != -1, f"Can't calc img size of {path}"
+    return h, w
+    
 class cv:
     @staticmethod
     def read_rgb(path: Union[str, Path]):
