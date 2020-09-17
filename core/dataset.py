@@ -44,7 +44,7 @@ def img_hastextstr(path: lambda p: (type(p) is str or
                    has_text: lambda s: s in ('o', 'x', '?'),
                    crop_h=None, crop_w=None, **attrs):
     #assert iu.assert_img_path(path)
-    Path(path).exists()
+    assert Path(path).exists()
     img_h, img_w = iu.img_hw(path)
     return crop_relation(
         path, has_text, img_h, img_w, crop_h, crop_w,
