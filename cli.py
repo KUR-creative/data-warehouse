@@ -11,9 +11,11 @@ from utils import image_utils as iu
 from utils.etc_utils import git_hash
 import tasks
 import tasks.map_imgs
+
 import core
 import core.path
 import core.name
+import core.io
 
 def assert_valid_data_source(data_src_dir_path):
     assert Path(data_src_dir_path).exists()
@@ -240,7 +242,7 @@ class dset(object):
                    img_root, select='random_select', has_text='?',
                    crop_h=None, crop_w=None,
                    note=None, logging=True):
-        # Validate inputs
+        ''' TODO: add help msg and logging '''
         data_source = core.path.data_source(img_root)
         assert_valid_data_source(data_source)
         assert_valid_dset_root(dset_root)
@@ -249,6 +251,9 @@ class dset(object):
             img_root, select, has_text, crop_h, crop_w)
         dset_name = core.name.dset_name(
             'fmd','img_only', (crop_h,crop_w), (0,0,0), dset_dic)
+
+        core.io.dump_data_yaml(
+            Path(dset_root, 'DSET', dset_name), dset_dic)
 
 
     @staticmethod
