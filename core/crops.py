@@ -14,4 +14,4 @@ def yxs(img_h, img_w, crop_h, crop_w):
     padded_w = img_w + modulo_pad(crop_w, img_w)
     hs = factorseq(crop_h, padded_h)
     ws = factorseq(crop_w, padded_w)
-    return list(product(hs, ws))
+    return [list(tup) for tup in product(hs, ws)]

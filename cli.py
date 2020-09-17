@@ -242,7 +242,9 @@ class dset(object):
                    img_root, select='random_select', has_text='?',
                    crop_h=None, crop_w=None,
                    note=None, logging=True):
-        ''' TODO: add help msg and logging '''
+        ''' TODO: add help msg and logging
+        python main.py dset image_only $dset/image_mask fmd $cfc/DATA/image $cfc/RELS/old_select_rdt.yml x 256 256
+        '''
         data_source = core.path.data_source(img_root)
         assert_valid_data_source(data_source)
         assert_valid_dset_root(dset_root)
