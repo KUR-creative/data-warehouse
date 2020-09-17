@@ -26,6 +26,7 @@ def gen_and_save(img_root, select, has_text):
     # Make name = img_only + ver_str
 
     from pprint import pprint
+    pprint(x)
 
     #core.dataset.relation('/home/kur/Downloads/GT.zip', has_text)
 
