@@ -10,12 +10,7 @@ import core.dataset
 import core.meta
 
 
-def generate(img_root):
-    img_paths = fu.descendants(img_root)
-    return [[p, None] for p in img_paths]
-
-# def relations
-def gen_and_save(img_root, select, has_text, crop_h, crop_w):
+def generate(img_root, select, has_text, crop_h, crop_w):
     select_path = Path(str(select))
     if not select_path.exists():
         raise NotImplementedError('Use random_select')
@@ -36,15 +31,3 @@ def gen_and_save(img_root, select, has_text, crop_h, crop_w):
         'cnet 학습을 위한 데이터셋')
         
     return F.merge(metadata, dic)
-        
-    #from pprint import pprint
-    #pprint(dic)
-    return dic
-    # Extract out crop h/w to cli
-    # Add metadata
-    # Make name = img_only + ver_str
-
-    #core.dataset.relation('/home/kur/Downloads/GT.zip', has_text)
-
-        #select_fn = 
-    pairs = generate(img_root)

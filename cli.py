@@ -245,11 +245,11 @@ class dset(object):
         assert_valid_data_source(data_source)
         assert_valid_dset_root(dset_root)
 
-        dset_dic = img_only.gen_and_save(
+        dset_dic = img_only.generate(
             img_root, select, has_text, crop_h, crop_w)
         dset_name = core.name.dset_name(
             'fmd','img_only', (crop_h,crop_w), (0,0,0), dset_dic)
-        print(dset_name)
+
 
     @staticmethod
     def merge(module, dset_root, *dset_yml_paths,
