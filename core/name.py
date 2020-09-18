@@ -23,9 +23,9 @@ def dset_name(name: str,
               suffix='.yml'):
     h, w = crop_hw
     r_train, r_dev, r_test = revision_rdt
-    n_train = sum(len(d['yxs']) for d in dset_dic['TRAIN'])
-    n_dev = sum(len(d['yxs']) for d in dset_dic['DEV'])
-    n_test = sum(len(d['yxs']) for d in dset_dic['TEST'])
+    n_train = dset_dic['num_train_img']
+    n_dev = dset_dic['num_dev_img']
+    n_test = dset_dic['num_test_img']
     return '.'.join([name, type, f'h{h}w{w}',
                      f'{r_train}_{n_train}',
                      f'{r_dev}_{n_dev}',

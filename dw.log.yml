@@ -57,3 +57,6 @@
 - [main.py, dset, image_only, /home/kur/dev/szmc/SZMC_DSET/image_mask, fmd, /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/DATA/image,
   /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/RELS/old_select_rdt.yml, x, '256',
   '256', '#7b7e94f915d8c4ad1b08327628a1ada8475bf57b']
+- [main.py, dset, image_only, /home/kur/dev/szmc/SZMC_DSET/image_only, fmd, /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/DATA/image,
+  /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/RELS/old_select_rdt.yml, x, '256',
+  '256', '#30c0d6c1c028550182d4374455b16a1d81033987']
