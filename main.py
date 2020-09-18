@@ -1,10 +1,19 @@
 ''' Constantly changing to test modules. Just ignore it. '''
+'''
 import fire
 import cli
 if __name__ == '__main__':
     fire.Fire(cli.interface)
 '''
 
+
+from pathlib import Path
+dset_path = str(Path('../SZMC_DSET/image_only/DSET/fmd.img_only.h256w256.0_6123.0_1000.0_500.yml').resolve())
+
+import cli
+cli.out.tfrecord(dset_path)
+
+'''
 from pathlib import Path
 iroot = str(Path('../SZMC_DATA/clean_fmd_comics/DATA/image/').resolve())
 dset_root = str(Path('../SZMC_DSET/image_mask').resolve())

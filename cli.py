@@ -6,6 +6,7 @@ import shutil
 import yaml
 
 from dataset import img_text_ox, img_only
+from out import tfrecord as tfrec
 from utils import file_utils as fu
 from utils import image_utils as iu
 from utils.etc_utils import git_hash
@@ -303,6 +304,17 @@ class dset(object):
                    
 class out(object):
     ''' Export dataset as learnable artifact(s) '''
+    
+    @staticmethod
+    def tfrecord(dset_path, out_path='',
+                 note=None, logging=True):
+        print(dset_path)
+        Path(dset_path).exists()
+        dset_root = core.path.dataset_root(dset_path)
+        assert_valid_dset_root(dset_root)
+
+        tfrec.gen_and_save(dset_path, out_path)
+        
     @staticmethod
     def text_ox(out_form, dset_path, out_path='',
                 note=None, logging=True):

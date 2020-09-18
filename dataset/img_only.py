@@ -37,6 +37,7 @@ def generate(img_root, select, has_text, crop_h, crop_w):
     number_metadata = {
         'crop_h': crop_h,
         'crop_w': crop_w,
+        'num_classes': 0, # out is None.
         'num_train_img': num_train_img,
         'num_dev_img': num_dev_img,
         'num_test_img': num_test_img,
@@ -44,7 +45,7 @@ def generate(img_root, select, has_text, crop_h, crop_w):
         'num_dev_crop': num_dev_crop,
         'num_test_crop': num_test_crop
     }
-    
+
     # Make general metadata
     data_source = core.path.data_source(img_root)
     assert Path(data_source).exists()
@@ -52,6 +53,12 @@ def generate(img_root, select, has_text, crop_h, crop_w):
         [data_source], '',
         '이미지만 있는 데이터셋. has_text(o/x/?) 속성 있음',
         'cnet 학습을 위한 데이터셋')
+    
+    # No class, No information
+    class_information = {'class_information':{}}
         
-    dic = F.omit(dic, ['num_train', 'num_dev', 'num_test'])
-    return F.merge(general_metadata, number_metadata, dic)
+    data = F.omit(dic, ['num_train', 'num_dev', 'num_test'])
+    return F.merge(general_metadata,
+                   number_metadata,
+                   class_information,
+                   data)
