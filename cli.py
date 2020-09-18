@@ -239,11 +239,31 @@ class dset(object):
     @staticmethod
     # TODO         dset_path - yaml path to save  
     def image_only(dset_root, dset_name,
-                   img_root, select='random_select', has_text='?',
+                   img_root, select='random_select',
+                   has_text=None,
                    crop_h=None, crop_w=None,
                    note=None, logging=True):
-        ''' TODO: add help msg and logging
-        python main.py dset image_only $dset/image_mask fmd $cfc/DATA/image $cfc/RELS/old_select_rdt.yml x 256 256
+        '''
+        표준 데이터 형태(canonical form)의 image_only 데이터셋 생성
+        
+        결과는 
+        dset_root/DSET/dset_name.img_only.h{crop_h}w{crop_w}.r_s.r_s.r_s.yml
+        로 저장된다.
+        
+        표준 데이터 형태는 브랜치 12-snet-dataset(PR 18)부터 적용된다.
+        식질머신에서 사용되는 대부분의 데이터를 표현할 수 있다.
+        
+        args:
+        dset_root: 데이터셋 폴더. DSET, OUTS, META 폴더를 포함함.
+        dset_name: 생성하는 데이터셋 이름. 
+        img_root: 처리하려는 이미지가 있는 폴더를 모두 포함하는 폴더.
+                  재귀적으로 모든 이미지를 처리한다.
+        select: R/D/T 선택 방법. select_yml을 넣으면 그걸 씀. 기본은 무작위 선택 (미구현)
+        has_text: 전체 이미지에 텍스트 유(o) 무(x) 알수없음(?). None일 경우 데이터에 포함되지 않음 (미구현)
+        crop_h: crop의 세로 길이. None인 경우는 전체 크기 사용 (미구현)
+        crop_w: crop의 세로 길이. None인 경우는 전체 크기 사용 (미구현)
+        note: 이 작업에 대한 추가적인 설명.
+        logging: False일 경우 로깅하지 않음
         '''
         data_source = core.path.data_source(img_root)
         assert_valid_data_source(data_source)
