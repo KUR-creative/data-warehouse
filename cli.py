@@ -253,9 +253,11 @@ class dset(object):
             img_root, select, has_text, crop_h, crop_w)
         dset_name = core.name.dset_name(
             'fmd','img_only', (crop_h,crop_w), (0,0,0), dset_dic)
-
         core.io.dump_data_yaml(
             Path(dset_root, 'DSET', dset_name), dset_dic)
+        
+        check_and_write_log(logging, dset_root)
+        check_and_write_dw_log(logging)
 
 
     @staticmethod
