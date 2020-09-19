@@ -31,7 +31,6 @@ def is_dataset_root(path):
 def dataset_root(path):
     ''' Get dataset-root of path. It could be path itself. '''
     for parent in parentseq(path):
-        print(parent)
         if is_dataset_root(parent):
             return str(parent)
 

@@ -9,9 +9,14 @@ if __name__ == '__main__':
 
 from pathlib import Path
 dset_path = str(Path('../SZMC_DSET/image_only/DSET/fmd.img_only.h256w256.0_6123.0_1000.0_500.yml').resolve())
+out_path = str(Path('tmp.tfrecord').resolve())
 
 import cli
-cli.out.tfrecord(dset_path)
+from dataset import img_only
+cli.out.tfrecord(dset_path, out_path)
+dic = img_only.read(out_path)
+from pprint import pprint
+pprint(dic)
 
 '''
 from pathlib import Path
