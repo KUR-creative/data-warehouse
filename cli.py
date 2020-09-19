@@ -308,8 +308,7 @@ class out(object):
     @staticmethod
     def tfrecord(dset_path, out_path='',
                  note=None, logging=True):
-        print(dset_path)
-        Path(dset_path).exists()
+        assert Path(dset_path).exists()
         dset_root = core.path.dataset_root(dset_path)
         assert_valid_dset_root(dset_root)
 
