@@ -66,9 +66,9 @@ def generate(img_root, select, has_text, crop_h, crop_w):
     data = F.omit(dic, ['num_train', 'num_dev', 'num_test'])
     return F.merge(general_metadata, number_metadata, data)
 
-def read(dset_path):
+def read(dset_path, **args):
     ''' Load tfrecord to dict. '''
-    tfrecord = tf.data.TFRecordDataset(dset_path)
+    tfrecord = tf.data.TFRecordDataset(dset_path, **args)
     
     def metadata(example):
         return tf.io.parse_single_example(
@@ -99,19 +99,17 @@ def read(dset_path):
     
     # If num_meta_example > 1, 
     # ... here some code for getting more metadata ...
-    '''
-    train_data = (tfrecord.skip(2) # meta, cls_info
-                          .take(num_train).map(img))
-    dev_data = (tfrecord.skip(2 + num_train)
-                        .take(num_dev).map(img))
-    test_data = (tfrecord.skip(2 + num_train + num_dev)
+    
+    # Get R/D/T data
+    rdt_data = tfrecord.skip(num_meta_example)
+    train_data = rdt_data.take(num_train).map(img)
+    dev_data   = rdt_data.skip(num_train).take(num_dev).map(img)
+    test_data  =(rdt_data.skip(num_train + num_dev)
                          .take(num_test).map(img))
-    '''
-
     return dict(
-        #train = train_data,
-        #dev   = dev_data,
-        #test  = test_data,
+        train = train_data,
+        dev   = dev_data,
+        test  = test_data,
         
         num_train = num_train,
         num_dev   = num_dev,

@@ -11,12 +11,34 @@ from pathlib import Path
 dset_path = str(Path('../SZMC_DSET/image_only/DSET/fmd.img_only.h256w256.0_6123.0_1000.0_500.yml').resolve())
 out_path = str(Path('tmp.tfrecord').resolve())
 
+'''
 import cli
-from dataset import img_only
 cli.out.tfrecord(dset_path, out_path)
-dic = img_only.read(out_path)
+
+'''
+from dataset import img_only
+dic = img_only.read(out_path, compression_type='ZLIB')
 from pprint import pprint
 pprint(dic)
+# visual check # TODO: make it cli cmd
+
+import tensorflow as tf
+from utils import tensorflow_utils as tfu
+def datum(example, h=None, w=None):
+    img = example['img'];
+    #return tf.cast(tfu.decode_raw(img, (h,w,3), tf.uint8), tf.float32)
+    return tfu.decode_raw(img, (h,w,3), tf.uint8)
+
+import cv2
+print('wtf')
+#for example in dic['train']:
+#for example in dic['dev']:
+for example in dic['test']:
+    print('t')
+    img = datum(example, dic['crop_height'], dic['crop_width'])
+    print(img.shape)
+    cv2.imshow('img', img.numpy()); cv2.waitKey(0)
+    print('?')
 
 '''
 from pathlib import Path
