@@ -8,16 +8,11 @@ def parentseq(path):
         path = path.parent
 
 #---------------------------------------------------------------
-def flat_root_pred(root_path, *dir_names):
-    if root_path is None:
-        return False
-    for name in dir_names:
-        path = Path(root_path, name)
-        if not path.exists():
-            return False
-    
 def is_data_source(path):
-    return flat_root_pred(path, 'DATA', 'META', 'RELS')
+    return(path is not None and
+           Path(path, 'DATA').exists() and
+           Path(path, 'META').exists() and
+           Path(path, 'RELS').exists())
 
 def data_source(path):
     ''' Get data-source of path. It could be path itself. '''
@@ -28,19 +23,22 @@ def data_source(path):
     
 #---------------------------------------------------------------
 def is_dataset_root(path):
-    return flat_root_pred(path, 'DSET', 'META', 'OUTS')
+    return(path is not None and
+           Path(path, 'DSET').exists() and
+           Path(path, 'META').exists() and
+           Path(path, 'OUTS').exists())
 
 def dataset_root(path):
     ''' Get dataset-root of path. It could be path itself. '''
     for parent in parentseq(path):
+        print(parent)
         if is_dataset_root(parent):
             return str(parent)
 
 '''
 from pprint import pprint
-dset_path = str(Path('noexists'))
-x = dataset_root(dset_path)
-print(x, type(x))
+dset_path = str(Path('../SZMC_DSET/image_only/DSET/fmd.img_only.h256w256.0_6123.0_1000.0_500.yml').resolve())
+pprint(dataset_root(dset_path))
 img_dir = '../../SZMC_DATA/v0data/m101/prev_images/'
 pprint(data_source(img_dir))
 '''
