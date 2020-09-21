@@ -30,10 +30,18 @@ def crop_normal_args(draw, min_v=28, max_v=4000):
     crop_w = draw(st.integers(min_value=min_v, max_value=img_w))
     return (img_h, img_w, crop_h, crop_w)
 
+# TODO: Refactor - unite same code as one
 @given(crop_larger_than_img())
-def test_crops(args):
-    with pytest.raises(ValueError):
-        core.crops.yxs(*args)
+def test_crops_larger_than_img(args):
+    img_h, img_w, crop_h, crop_w = args
+    yxs = core.crops.yxs(*args)
+
+    padded_h = img_h + modulo_pad(crop_h, img_h)
+    padded_w = img_w + modulo_pad(crop_w, img_w)
+    ys, xs = fp.unzip(yxs)
+    
+    assert len(set(ys)) * crop_h == padded_h
+    assert len(set(xs)) * crop_w == padded_w
         
 @given(crop_normal_args())
 def test_crops(args):
@@ -43,8 +51,6 @@ def test_crops(args):
     padded_h = img_h + modulo_pad(crop_h, img_h)
     padded_w = img_w + modulo_pad(crop_w, img_w)
     ys, xs = fp.unzip(yxs)
-    print(':', padded_h, padded_w,
-          '|', modulo_pad(crop_h, img_h),
-          img_w + modulo_pad(crop_w, img_w))
+    
     assert len(set(ys)) * crop_h == padded_h
     assert len(set(xs)) * crop_w == padded_w
