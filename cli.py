@@ -306,12 +306,16 @@ class out(object):
     ''' Export dataset as learnable artifact(s) '''
     
     @staticmethod
-    def tfrecord(dset_path, out_path='',
-                 note=None, logging=True):
-        assert Path(dset_path).exists()
-        dset_root = core.path.dataset_root(dset_path)
+    def united_tfrecord(dset_path, out_path='',
+                        note=None, logging=True):
+        dset_path = Path(dset_path)
+        assert dset_path.exists()
+        dset_root = Path(core.path.dataset_root(dset_path))
         assert_valid_dset_root(dset_root)
 
+        out_path = str(
+            Path(out_path).resolve() if out_path else
+            dset_root / 'OUTS' / f'{dset_path.stem}.tfrecord')
         tfrec.gen_and_save(dset_path, out_path)
         
     @staticmethod
