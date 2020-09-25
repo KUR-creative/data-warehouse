@@ -133,6 +133,11 @@ class data(object):
             #print(dst_path); cv2.imshow('c', crop); cv2.waitKey(0)
             iu.cv.write_rgb(dst_path, crop)
         print('Done!')
+        
+        data_source = core.path.data_source(img_root)
+        if data_source:
+            check_and_write_log(logging, data_source)
+        check_and_write_dw_log(logging)
     
     @staticmethod
     def copy_hw_images(height, width, src_dir, dst_dir=None,
