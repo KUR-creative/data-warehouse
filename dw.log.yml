@@ -60,3 +60,5 @@
 - [main.py, dset, image_only, /home/kur/dev/szmc/SZMC_DSET/image_only, fmd, /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/DATA/image,
   /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/RELS/old_select_rdt.yml, x, '256',
   '256', '#30c0d6c1c028550182d4374455b16a1d81033987']
+- [main.py, dset, crop_only, /home/kur/dev/szmc/SZMC_DSET/image_only/, fmd, /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/DATA/image.h256w256,
+  /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/RELS/old_select_rdt.yml, '#bb1a0fa3dc2b297564659005eb4e3ec0e4592f61']

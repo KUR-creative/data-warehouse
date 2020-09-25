@@ -6,7 +6,7 @@ import shutil
 import yaml
 from tqdm import tqdm
 
-from dataset import img_text_ox, img_only
+from dataset import img_text_ox, img_only, crop_only
 from out import tfrecord as tfrec
 from utils import fp
 from utils import file_utils as fu
@@ -325,6 +325,24 @@ class dset(object):
             'fmd','img_only', (crop_h,crop_w), (0,0,0), dset_dic)
         core.io.dump_data_yaml(
             Path(dset_root, 'DSET', dset_name), dset_dic)
+        
+        check_and_write_log(logging, dset_root)
+        check_and_write_dw_log(logging)
+
+    @staticmethod
+    def crop_only(dset_root, dset_name,
+                  crops_root, select='random_select',
+                  note=None, logging=True):
+        assert_valid_dset_root(dset_root)
+        dset_dic = crop_only.generate(crops_root, select)
+        dset_name = core.name.dset_name(
+            'fmd','crop_only',
+            (dset_dic['crop_h'], dset_dic['crop_w']), (0,0,0),
+            dset_dic)
+        print('Dump dataset yml...')
+        core.io.dump_data_yaml(
+            Path(dset_root, 'DSET', dset_name), dset_dic)
+        print('Done!')
         
         check_and_write_log(logging, dset_root)
         check_and_write_dw_log(logging)

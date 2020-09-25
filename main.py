@@ -5,7 +5,17 @@ if __name__ == '__main__':
     fire.Fire(cli.interface)
 '''
 from pathlib import Path
-#dset_path = str(Path('../SZMC_DSET/image_only/DSET/fmd.img_only.h256w256.0_6123.0_1000.0_500.yml').resolve())
+dset_root = str(Path('../SZMC_DSET/image_only').resolve())
+select_path = str(Path('../SZMC_DATA/').resolve())
+dset_name = 'fmd'
+import cli
+cli.dset.crops_only(
+    dset_root, dset_name,
+    '/home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/DATA/image.h256w256/',
+    select='/home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/RELS/old_select_rdt.yml')
+'''
+
+'''
 #out_dir = str(Path('../SZMC_DSET/image_only/OUTS/fmd.img_only.h256w256.0_6123.0_1000.0_500').resolve())
 #from out import flist
 #flist.gen_and_save(dset_path, out_dir)
