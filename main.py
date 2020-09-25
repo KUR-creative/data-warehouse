@@ -4,12 +4,21 @@ import cli
 if __name__ == '__main__':
     fire.Fire(cli.interface)
 '''
-
-
 from pathlib import Path
-dset_path = str(Path('../SZMC_DSET/image_only/DSET/fmd.img_only.h256w256.0_6123.0_1000.0_500.yml').resolve())
-out_path = str(Path('tmp.tfrecord').resolve())
+#dset_path = str(Path('../SZMC_DSET/image_only/DSET/fmd.img_only.h256w256.0_6123.0_1000.0_500.yml').resolve())
+#out_dir = str(Path('../SZMC_DSET/image_only/OUTS/fmd.img_only.h256w256.0_6123.0_1000.0_500').resolve())
+#from out import flist
+#flist.gen_and_save(dset_path, out_dir)
+import cli
+cli.data.crops_dir(
+    '/home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/DATA/image',
+    512, 512, exist_ok=True)
+'''
 
+
+
+
+'''
 from dataset import img_only
 dic = img_only.read(out_path, compression_type='ZLIB')
 from pprint import pprint

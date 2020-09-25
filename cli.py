@@ -4,9 +4,11 @@ import sys
 import shutil
 
 import yaml
+from tqdm import tqdm
 
 from dataset import img_text_ox, img_only
 from out import tfrecord as tfrec
+from utils import fp
 from utils import file_utils as fu
 from utils import image_utils as iu
 from utils.etc_utils import git_hash
@@ -76,19 +78,61 @@ class data(object):
         if dst_dir is None:
             src = str(Path(mask_dir)) # Remove path sep thingy
             dst_dir = f'{src}.ch{channel}' # TODO: Can refactor?
-        mask_paths = tasks.map_imgs.mask1bit_dstpath_pairseq(
-            mask_dir, dst_dir, channel)
+        mask_pathseq = tasks.map_imgs.mask1bit_dstpath_pairseq(
+            mask_dir, dst_dir, channel) # <mask, path>
         
         fu.copy_dirtree(mask_dir, dst_dir, dirs_exist_ok=exist_ok)
 
         print('Generate 1 bit masks...')
-        for mask, path in mask_paths:
+        for mask, path in mask_pathseq:
             iu.cv.write_png1bit(path, mask)
         print('Done!')
             
         data_source = core.path.data_source(mask_dir)
         check_and_write_log(logging, data_source)
         check_and_write_dw_log(logging)
+
+    @staticmethod
+    def crops_dir(img_root, crop_h, crop_w,
+                  pad_mode='crop_maximum',
+                  dst_root='', exist_ok=False,
+                  note=None, logging=True):
+        '''
+        img_root의 모든 이미지를 crop하고 dst_root로 재귀적으로 저장. 
+        img_root의 디렉토리 구조가 보존된다.
+        
+        crop 파일 이름은 원본 이미지 이름에 .y{y}x{x}를 붙인다.
+        만일 이미지가 crop_h, crop_w보다 작다면, 
+        패딩하여 크기를 늘린 이미지가 저장된다.
+        
+        args:
+        img_root: 이미지가 저장되어 있는 디렉토리, 어떤 구조라도 허용.
+        crop_h: crop의 height.
+        crop_w: crop의 width.
+        pad_mode: 문자열로 pad mode를 정의할 수 있다. 
+        기본은 일반적인 만화 이미지에서 쓰는 crop_maximum으로, crop의
+        최대 값으로 pad한다(np.pad에 없는 mode임)
+        dst_root: crop을 저장할 디렉토리 경로.
+        exist_ok: dst_root가 존재해도 처리를 할지 결정. 기본: False
+        기본값은 img_root.h{crop_h}w{crop_w}로 저장된다.
+        '''
+        assert Path(img_root).exists()
+        assert Path(img_root).is_dir()
+        if not dst_root:
+            dst_root = img_root + f'.h{crop_h}w{crop_w}'
+        num_mappings, cropseq, dst_pathseq = \
+            tasks.map_imgs.recur_cropseq(
+                img_root, dst_root, crop_h, crop_w,
+                pad_mode=pad_mode)
+        
+        fu.copy_dirtree(img_root, dst_root, dirs_exist_ok=exist_ok)
+        import cv2
+        for crop, dst_path in tqdm(zip(cropseq, dst_pathseq),
+                                   desc='Crop and Save images',
+                                   total=num_mappings):
+            #print(dst_path); cv2.imshow('c', crop); cv2.waitKey(0)
+            iu.cv.write_rgb(dst_path, crop)
+        print('Done!')
     
     @staticmethod
     def copy_hw_images(height, width, src_dir, dst_dir=None,
@@ -317,6 +361,13 @@ class out(object):
             Path(out_path).resolve() if out_path else
             dset_root / 'OUTS' / f'{dset_path.stem}.tfrecord')
         tfrec.gen_and_save(dset_path, out_path)
+        
+    @staticmethod
+    def flist(dset_path, out_dir='', note=None, logging=True):
+        dset_path = Path(dset_path)
+        assert dset_path.exists()
+        dset_root = Path(core.path.dataset_root(dset_path))
+        assert_valid_dset_root(dset_root)
         
     @staticmethod
     def text_ox(out_form, dset_path, out_path='',

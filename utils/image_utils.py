@@ -4,6 +4,7 @@ from pathlib import Path
 import cv2
 import filetype
 import imagesize
+import numpy as np
 
 
 def assert_img_path(path):
@@ -23,6 +24,28 @@ def img_hw(path):
     assert w != -1 and h != -1, f"Can't calc img size of {path}"
     return h, w
     
+def pad(img, h, w, mode='reflect', **kwargs):
+    ''' Pad (small) (ih,iw) img to (h,w) img '''
+    ih = img.shape[0]; iw = img.shape[1]
+    padding = [
+        (0,h - ih), (0,w - iw)
+    ] + [(0,0)] if len(img.shape) == 3 else []
+    
+    if mode == 'crop_maximum':
+        return np.pad(img, padding, mode='constant',
+                      constant_values=np.max(img))
+    '''
+    elif mode == 'crop_minimum':
+        return np.pad(img, padding, mode='constant',
+                      constant_values=np.min(img))
+    '''
+    return np.pad(img, padding, mode=mode)
+
+def crop(img, y, x, h, w, pad_mode, **kwargs):
+    ''' If img[y:, x:] is smaller than (h,w), pad applied '''
+    return pad(img[y:y+h, x:x+w], h, w, pad_mode, **kwargs)
+
+#---------------------------------------------------------------
 class cv:
     @staticmethod
     def read_rgb(path: Union[str, Path]):

@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from utils import file_utils as fu
+
 #---------------------------------------------------------------
 def parentseq(path):
     path = Path(path)
@@ -41,3 +43,7 @@ pprint(dataset_root(dset_path))
 img_dir = '../../SZMC_DATA/v0data/m101/prev_images/'
 pprint(data_source(img_dir))
 '''
+
+def crop(img_path, y, x, fmt='_y{y}x{x}'):
+    new_stem = fu.stem(img_path) + fmt.format(y=y, x=x)
+    return fu.set_stem(img_path, new_stem)

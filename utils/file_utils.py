@@ -92,6 +92,8 @@ def extension(path):
 def stem(path): return Path(path).stem
 def name(path): return Path(path).name
     
+def set_stem(path, stem: str):
+    return str(Path(path).parent / (stem + Path(path).suffix))
 #---------------------------------------------------------------
 def human_sorted(iterable):
     ''' Sorts the given iterable in the way that is expected. '''
