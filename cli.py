@@ -333,6 +333,27 @@ class dset(object):
     def crop_only(dset_root, dset_name,
                   crops_root, select='random_select',
                   note=None, logging=True):
+        '''
+        crop만 존재하는 폴더(crops_root)로부터
+        표준 데이터 형태(canonical form)의 crop_only 데이터셋 생성
+        crops_root 내부의 모든 crop은 크기(h,w)가 같아야 한다.
+        
+        결과는 
+        dset_root/DSET/{dset_name}.crop_only.h{crop_h}w{crop_w}.r_s.r_s.r_s.yml
+        로 저장된다.
+        
+        표준 데이터 형태는 브랜치 12-snet-dataset(PR 18)부터 적용된다.
+        식질머신에서 사용되는 대부분의 데이터를 표현할 수 있다.
+        
+        args:
+        dset_root: 데이터셋 폴더. DSET, OUTS, META 폴더를 포함함.
+        dset_name: 생성하는 데이터셋 이름. 
+        crops_root: 처리하려는 crop이 있는 폴더를 모두 포함하는 폴더.
+                    재귀적으로 모든 이미지를 처리한다.
+        select: R/D/T 선택 방법. select_yml을 넣으면 그걸 씀. 기본은 무작위 선택 (미구현)
+        note: 이 작업에 대한 추가적인 설명.
+        logging: False일 경우 로깅하지 않음
+        '''
         assert_valid_dset_root(dset_root)
         dset_dic = crop_only.generate(crops_root, select)
         dset_name = core.name.dset_name(
@@ -387,10 +408,45 @@ class out(object):
         
     @staticmethod
     def flist(dset_path, out_dir='', note=None, logging=True):
+        '''
+        몇몇 모델에서 원하는 flist 파일 3개(R/D/T) 생성. 
+        현재는 crop_only만 지원.
+        
+        dset_path: crop_only 데이터셋 경로
+        out_dir: 없으면 dset_root 구해서 그 아래 /OUTS에 저장.
+        '''
         dset_path = Path(dset_path)
         assert dset_path.exists()
         dset_root = Path(core.path.dataset_root(dset_path))
         assert_valid_dset_root(dset_root)
+        
+        if not out_dir:
+            out_dir = dset_root / 'OUTS' 
+        with open(dset_path) as f:
+            dset = yaml.safe_load(f)
+
+        stem_parts = dset_path.stem.split('.')
+        test_rs = stem_parts[-1] # rs: revision_size
+        dev_rs = stem_parts[-2]
+        train_rs = stem_parts[-3]
+        except_rdt = '.'.join(stem_parts[:-3])
+        
+        train_flist_path = Path(
+            out_dir,
+            '.'.join([except_rdt, 'train', train_rs, 'flist']))
+        dev_flist_path = Path(
+            out_dir,
+            '.'.join([except_rdt, 'dev', dev_rs, 'flist']))
+        test_flist_path = Path(
+            out_dir,
+            '.'.join([except_rdt, 'test', test_rs, 'flist']))
+        
+        train_flist_path.write_text('\n'.join(dset['TRAIN']))
+        dev_flist_path.write_text('\n'.join(dset['DEV']))
+        test_flist_path.write_text('\n'.join(dset['TEST']))
+        
+        check_and_write_log(logging, dset_root)
+        check_and_write_dw_log(logging)
         
     @staticmethod
     def text_ox(out_form, dset_path, out_path='',
