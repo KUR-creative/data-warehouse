@@ -20,6 +20,7 @@ import core.path
 import core.name
 import core.io
 
+#----------------------------------------------------------------
 def assert_valid_data_source(data_src_dir_path):
     assert Path(data_src_dir_path).exists()
     assert Path(data_src_dir_path).is_absolute()
@@ -54,6 +55,7 @@ def write_log(log_path, content):
                             allow_unicode=True,
                             default_flow_style=True))
 
+#----------------------------------------------------------------
 class data(object):
     ''' Add data to data-sources '''
     @staticmethod
@@ -489,9 +491,27 @@ class out(object):
         check_and_write_log(logging, dset_root)
         check_and_write_dw_log(logging)
         
+@staticmethod
+def history(log_path='dw.log.yml'):
+    '''
+    Print previously executed commands
+    
+    args:
+    log_path: log file path
+    '''
+    assert Path(log_path).exists()
+    with open(log_path) as f:
+        cmd_args_lst = yaml.safe_load(f)
+
+    #print(cmd_args_lst)
+    print('\n'.join([' '.join(['python', *args])
+                     for args in cmd_args_lst]))
+
 
 #----------------------------------------------------------------
 class interface(object):
     data = data
     dset = dset
     out = out
+    history = history
+    hist = history
