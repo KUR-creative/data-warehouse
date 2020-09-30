@@ -100,6 +100,9 @@ def tmapcat(f,*seq):
     else lambda *xs: tuple(F.mapcat(f,*xs))
 
 def group_by(f, seq=None):
+    # TODO: if seq is empty, return empty dict...
+    # current implementation return function!
+    # DO NOT USE None or falsey value for this job!
     return F.group_by(f, seq) if not is_empty(seq)\
     else lambda xs: F.group_by(f, xs)
 
