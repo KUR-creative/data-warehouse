@@ -172,7 +172,7 @@ class data(object):
     def crops(module, data_source, crop_h, crop_w, *args,
               note=None, logging=True):
         '''
-        잘린 이미지(crops) 데이터 생성
+        [DEPRECATED!] 잘린 이미지(crops) 데이터 생성
         
         데이터 소스(DATA_SOURCE)로부터, MODULE에서 정의한 대로 이미지를 
         가져오고, (CROP_H, CROP_W)로 자른 후, MODULE에 정의된 곳에 
