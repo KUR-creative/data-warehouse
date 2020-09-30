@@ -4,7 +4,11 @@ Data Manipulation System for SickZil-Machine
 ## Reusable Modules
 
 ### utils
-Reusable (pure) functions **for any circumstance**.
+Reusable (pure) functions **for any circumstance**. 
+
+Fewer dependencies are better! If possible, DO NOT RELY ON ANY MODULES. \
+DO NOT DEPEND project specific modules or codes. \
+DO NOT DEPEND other utils modules. All utils modules can be used just as a single file.
 
 ### core
 Reusable small and simple (pure) functions just **for this project**. \
