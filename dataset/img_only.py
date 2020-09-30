@@ -4,7 +4,6 @@ import yaml
 import funcy as F
 import tensorflow as tf
 
-from utils import file_utils as fu
 from utils import tensorflow_utils as tfu
 from utils import fp
 import core

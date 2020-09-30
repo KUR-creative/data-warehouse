@@ -8,7 +8,6 @@ from tqdm import tqdm
 
 from dataset import img_text_ox, img_only, crop_only
 from out import tfrecord as tfrec
-from utils import fp
 from utils import file_utils as fu
 from utils import image_utils as iu
 from utils.etc_utils import git_hash
@@ -128,7 +127,6 @@ class data(object):
                 pad_mode=pad_mode)
         
         fu.copy_dirtree(img_root, dst_root, dirs_exist_ok=exist_ok)
-        import cv2
         for crop, dst_path in tqdm(zip(cropseq, dst_pathseq),
                                    desc='Crop and Save images',
                                    total=num_mappings):

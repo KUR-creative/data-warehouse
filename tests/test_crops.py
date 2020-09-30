@@ -1,10 +1,9 @@
-import pytest
 from hypothesis import assume, given #, example, settings
 from hypothesis import strategies as st
 
 import core
 import core.crops
-from utils.etc_utils import factors, modulo_pad
+from utils.etc_utils import modulo_pad
 from utils import fp
 
 @st.composite

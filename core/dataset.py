@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import numpy as np
 from multimethod import overload
 import funcy as F
 
