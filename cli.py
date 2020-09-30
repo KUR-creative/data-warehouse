@@ -120,7 +120,8 @@ class data(object):
         assert Path(img_root).exists()
         assert Path(img_root).is_dir()
         if not dst_root:
-            dst_root = img_root + f'.h{crop_h}w{crop_w}'
+            path = fu.path_str(img_root)
+            dst_root = path + f'.h{crop_h}w{crop_w}'
         num_mappings, cropseq, dst_pathseq = \
             tasks.map_imgs.recur_cropseq(
                 img_root, dst_root, crop_h, crop_w,
