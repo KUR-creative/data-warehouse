@@ -355,6 +355,8 @@ class dset(object):
         logging: False일 경우 로깅하지 않음
         '''
         assert_valid_dset_root(dset_root)
+        assert Path(crops_root).exists()
+        
         dset_dic = crop_only.generate(crops_root, select)
         dset_name = core.name.dset_name(
             'fmd','crop_only',
