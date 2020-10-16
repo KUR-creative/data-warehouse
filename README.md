@@ -4,7 +4,11 @@ Data Manipulation System for SickZil-Machine
 ## Reusable Modules
 
 ### utils
-Reusable (pure) functions **for any circumstance**.
+Reusable (pure) functions **for any circumstance**. 
+
+Fewer dependencies are better! If possible, DO NOT RELY ON ANY MODULES. \
+DO NOT DEPEND project specific modules or codes. \
+DO NOT DEPEND other utils modules. All utils modules can be used just as a single file.
 
 ### core
 Reusable small and simple (pure) functions just **for this project**. \
@@ -23,6 +27,10 @@ Side-effect are allowed, but generally discouraged.
 Data is raw data or relations(of data) from data source 
 or external dataset. Some selected element(or atom) of data 
 consists dataset.
+
+If the relations of data is implicitly expressed through 
+directory structure and file name, explicit data representation
+(yaml, json) is not added to the data.
 
 ### dataset
 `Logics to add / generate dataset.` \

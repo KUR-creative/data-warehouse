@@ -92,8 +92,8 @@ def output(dset_path, out_path): # TODO: extract and relocate reusable logic to 
     pairs = dset_dic['TRAIN'] + dset_dic['DEV'] + dset_dic['TEST']
     len_data = len(pairs)
     img_cls_seq = (
-        (cv2.cvtColor(cv2.imread(img_path), cv2.COLOR_BGR2RGB),
-         has_text) for img_path, has_text in pairs)
+        (cv2.cvtColor(cv2.imread(img_path), cv2.COLOR_BGR2RGB), has_text)
+        for img_path, has_text in pairs)
     datumseq = ({'img': _bytes(img.tobytes()),
                  'cls': _int64(cls)}
                 for img, cls in img_cls_seq) # R->D->T

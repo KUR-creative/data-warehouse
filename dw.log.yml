@@ -52,3 +52,26 @@
   '#b4a9beebbb9090218a5d0749255cdcaf1a0f1b33']
 - [main.py, data, gen_1bit_masks, /home/kur/dev/szmc/SZMC_DATA/v0data/school/DATA/masks,
   '#b4a9beebbb9090218a5d0749255cdcaf1a0f1b33']
+- [main.py, data, canonical_select_file, clean_fmd_comics, /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/RELS/db_fmd_cleans190414_valid.flist,
+  '#17892e9715022bdbadbf5336aa3098472d3146ce']
+- [main.py, dset, image_only, /home/kur/dev/szmc/SZMC_DSET/image_mask, fmd, /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/DATA/image,
+  /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/RELS/old_select_rdt.yml, x, '256',
+  '256', '#7b7e94f915d8c4ad1b08327628a1ada8475bf57b']
+- [main.py, dset, image_only, /home/kur/dev/szmc/SZMC_DSET/image_only, fmd, /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/DATA/image,
+  /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/RELS/old_select_rdt.yml, x, '256',
+  '256', '#30c0d6c1c028550182d4374455b16a1d81033987']
+- [main.py, dset, crop_only, /home/kur/dev/szmc/SZMC_DSET/image_only/, fmd, /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/DATA/image.h256w256,
+  /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/RELS/old_select_rdt.yml, '#bb1a0fa3dc2b297564659005eb4e3ec0e4592f61']
+- [main.py, out, flist, /home/kur/dev/szmc/SZMC_DSET/image_only/DSET/fmd.crop_only.h256w256.0_6123.0_1000.0_500.yml,
+  '#abfba34cc386b4530f2cbaa244d7d75a1f03b057']
+- [main.py, data, canonical_select_file, clean_fmd_comics, /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/RELS/db_fmd_cleans190414_valid.flist,
+  '#39c3c0f6706993637af85931e83c77b456594a6e']
+- [main.py, dset, image_only, /home/kur/dev/szmc/SZMC_DSET/image_only, fmd, /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/DATA/image,
+  /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/RELS/old_select_rdt.yml, x, '256',
+  '256', '#39c3c0f6706993637af85931e83c77b456594a6e']
+- [main.py, data, crops_dir, /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/DATA/image/,
+  '256', '256', '#c70b48b8a536453bbb17f7997673807589225e88']
+- [main.py, dset, crop_only, /home/kur/dev/szmc/SZMC_DSET/image_only/, fmd, /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/DATA/image.h256w256,
+  /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/RELS/old_select_rdt.yml, '#c9710ecb1861eff4f441458de7dd457b64e8ae29']
+- [main.py, out, flist, /home/kur/dev/szmc/SZMC_DSET//image_only/DSET/fmd.crop_only.h256w256.0_6123.0_1000.0_500.yml,
+  '#0318cfde384b77d2e1a5bb88a1e84e1621fafced']

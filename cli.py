@@ -4,16 +4,22 @@ import sys
 import shutil
 
 import yaml
+from tqdm import tqdm
 
-from dataset import img_text_ox
+from dataset import img_text_ox, img_only, crop_only
+from out import tfrecord as tfrec
 from utils import file_utils as fu
 from utils import image_utils as iu
 from utils.etc_utils import git_hash
 import tasks
 import tasks.map_imgs
+
 import core
 import core.path
+import core.name
+import core.io
 
+#----------------------------------------------------------------
 def assert_valid_data_source(data_src_dir_path):
     assert Path(data_src_dir_path).exists()
     assert Path(data_src_dir_path).is_absolute()
@@ -21,7 +27,7 @@ def assert_valid_data_source(data_src_dir_path):
     assert Path(data_src_dir_path, 'META').exists()
     assert Path(data_src_dir_path, 'RELS').exists()
 
-def assert_valid_dset_directory(dset_dir_path):
+def assert_valid_dset_root(dset_dir_path):
     assert Path(dset_dir_path).exists()
     assert Path(dset_dir_path).is_absolute()
     assert Path(dset_dir_path, 'DSET').exists()
@@ -48,9 +54,9 @@ def write_log(log_path, content):
                             allow_unicode=True,
                             default_flow_style=True))
 
+#----------------------------------------------------------------
 class data(object):
     ''' Add data to data-sources '''
-    
     @staticmethod
     def gen_1bit_masks(mask_dir, dst_dir=None, channel=0,
                        exist_ok=False,
@@ -73,18 +79,65 @@ class data(object):
         if dst_dir is None:
             src = str(Path(mask_dir)) # Remove path sep thingy
             dst_dir = f'{src}.ch{channel}' # TODO: Can refactor?
-        mask_paths = tasks.map_imgs.mask1bit_dstpath_pairseq(
-            mask_dir, dst_dir, channel)
+        mask_pathseq = tasks.map_imgs.mask1bit_dstpath_pairseq(
+            mask_dir, dst_dir, channel) # <mask, path>
         
         fu.copy_dirtree(mask_dir, dst_dir, dirs_exist_ok=exist_ok)
 
         print('Generate 1 bit masks...')
-        for mask, path in mask_paths:
+        for mask, path in mask_pathseq:
             iu.cv.write_png1bit(path, mask)
         print('Done!')
             
         data_source = core.path.data_source(mask_dir)
         check_and_write_log(logging, data_source)
+        check_and_write_dw_log(logging)
+
+    @staticmethod
+    def crops_dir(img_root, crop_h, crop_w,
+                  pad_mode='crop_maximum',
+                  dst_root='', exist_ok=False,
+                  note=None, logging=True):
+        '''
+        img_root의 모든 이미지를 crop하고 dst_root로 재귀적으로 저장. 
+        img_root의 디렉토리 구조가 보존된다.
+        
+        crop 파일 이름은 원본 이미지 이름에 .y{y}x{x}를 붙인다.
+        만일 이미지가 crop_h, crop_w보다 작다면, 
+        패딩하여 크기를 늘린 이미지가 저장된다.
+        
+        args:
+        img_root: 이미지가 저장되어 있는 디렉토리, 어떤 구조라도 허용.
+        crop_h: crop의 height.
+        crop_w: crop의 width.
+        pad_mode: 문자열로 pad mode를 정의할 수 있다. 
+        기본은 일반적인 만화 이미지에서 쓰는 crop_maximum으로, crop의
+        최대 값으로 pad한다(np.pad에 없는 mode임)
+        dst_root: crop을 저장할 디렉토리 경로.
+        exist_ok: dst_root가 존재해도 처리를 할지 결정. 기본: False
+        기본값은 img_root.h{crop_h}w{crop_w}로 저장된다.
+        '''
+        assert Path(img_root).exists()
+        assert Path(img_root).is_dir()
+        if not dst_root:
+            path = fu.path_str(img_root)
+            dst_root = path + f'.h{crop_h}w{crop_w}'
+        num_mappings, cropseq, dst_pathseq = \
+            tasks.map_imgs.recur_cropseq(
+                img_root, dst_root, crop_h, crop_w,
+                pad_mode=pad_mode)
+        
+        fu.copy_dirtree(img_root, dst_root, dirs_exist_ok=exist_ok)
+        for crop, dst_path in tqdm(zip(cropseq, dst_pathseq),
+                                   desc='Crop and Save images',
+                                   total=num_mappings):
+            #print(dst_path); cv2.imshow('c', crop); cv2.waitKey(0)
+            iu.cv.write_rgb(dst_path, crop)
+        print('Done!')
+        
+        data_source = core.path.data_source(img_root)
+        if data_source:
+            check_and_write_log(logging, data_source)
         check_and_write_dw_log(logging)
     
     @staticmethod
@@ -118,7 +171,7 @@ class data(object):
     def crops(module, data_source, crop_h, crop_w, *args,
               note=None, logging=True):
         '''
-        잘린 이미지(crops) 데이터 생성
+        [DEPRECATED!] 잘린 이미지(crops) 데이터 생성
         
         데이터 소스(DATA_SOURCE)로부터, MODULE에서 정의한 대로 이미지를 
         가져오고, (CROP_H, CROP_W)로 자른 후, MODULE에 정의된 곳에 
@@ -171,11 +224,33 @@ class data(object):
         
         check_and_write_log(logging, data_source)
         check_and_write_dw_log(logging)
+        
+    @staticmethod
+    def canonical_select_file(module, select_file, out_path=None,
+                              note=None, logging=True):
+        '''
+        옛 메타 데이터 파일로부터 통일된 형식의 R/D/T 선택 파일을 생성한다.
+        
+        일종의 임시 스크립트이며, 일반적인 명령과는 거리가 멀다.
+        module은 clean_fmd_comics와 old_snet를 쓸 수 있다.
+        
+        이 select 파일을 이용하여 데이터셋을 만들어 학습하면 
+        과거 모델의 실험 결과와 비교할 수 있다.
+        '''
+        data_source = core.path.data_source(select_file)
+        assert_valid_data_source(data_source)
+        
+        m = import_module(f'data.{module}', 'data')
+        m.canonical_select(data_source, select_file, out_path)
 
+        check_and_write_log(logging, data_source)
+        check_and_write_dw_log(logging)
+        
 class dset(object):
     ''' Generate and Save dataset from data-sources '''
+
     @staticmethod
-    def text_ox(out_dset_dir, select,
+    def text_ox(dset_root, select,
                 train_ratio, dev_ratio, test_ratio,
                 rel_file_name, *data_source_dirs,
                 note=None, logging=True):
@@ -188,7 +263,7 @@ class dset(object):
         저장한다.
         
         args:
-        out_dset_dir: 생성한 데이터셋 yml 파일이 저장되는 DSET, META, OUTS을 포함하는 폴더.
+        dset_root: 생성한 데이터셋 yml 파일이 저장되는 DSET, META, OUTS을 포함하는 폴더.
         select: tRain/Dev/Test를 선택하는 함수. 현재 random_select만 지원. 
                 SELECT_FN이 정의된 모듈을 참조할 것.
         train_ratio: 학습 데이터의 비율, 정수. 내부적으로는 R / (R + D + T)로 계산한다.
@@ -202,39 +277,180 @@ class dset(object):
         note: 이 작업에 대한 추가적인 설명.
         logging: False일 경우 로깅하지 않음
         '''
-        assert_valid_dset_directory(out_dset_dir)
+        assert_valid_dset_root(dset_root)
         assert len(data_source_dirs) > 0
         img_text_ox.generate(
-            out_dset_dir, select,
+            dset_root, select,
             (train_ratio, dev_ratio, test_ratio),
             rel_file_name, *data_source_dirs)
         
-        check_and_write_log(logging, out_dset_dir)
+        check_and_write_log(logging, dset_root)
+        check_and_write_dw_log(logging)
+        
+    @staticmethod
+    # TODO         dset_path - yaml path to save  
+    def image_only(dset_root, dset_name,
+                   img_root, select='random_select',
+                   has_text=None,
+                   crop_h=None, crop_w=None,
+                   note=None, logging=True):
+        '''
+        표준 데이터 형태(canonical form)의 image_only 데이터셋 생성
+        
+        결과는 
+        dset_root/DSET/dset_name.img_only.h{crop_h}w{crop_w}.r_s.r_s.r_s.yml
+        로 저장된다.
+        
+        표준 데이터 형태는 브랜치 12-snet-dataset(PR 18)부터 적용된다.
+        식질머신에서 사용되는 대부분의 데이터를 표현할 수 있다.
+        
+        args:
+        dset_root: 데이터셋 폴더. DSET, OUTS, META 폴더를 포함함.
+        dset_name: 생성하는 데이터셋 이름. 
+        img_root: 처리하려는 이미지가 있는 폴더를 모두 포함하는 폴더.
+                  재귀적으로 모든 이미지를 처리한다.
+        select: R/D/T 선택 방법. select_yml을 넣으면 그걸 씀. 기본은 무작위 선택 (미구현)
+        has_text: 전체 이미지에 텍스트 유(o) 무(x) 알수없음(?). None일 경우 데이터에 포함되지 않음 (미구현)
+        crop_h: crop의 세로 길이. None인 경우는 전체 크기 사용 (미구현)
+        crop_w: crop의 세로 길이. None인 경우는 전체 크기 사용 (미구현)
+        note: 이 작업에 대한 추가적인 설명.
+        logging: False일 경우 로깅하지 않음
+        '''
+        data_source = core.path.data_source(img_root)
+        assert_valid_data_source(data_source)
+        assert_valid_dset_root(dset_root)
+
+        dset_dic = img_only.generate(
+            img_root, select, has_text, crop_h, crop_w)
+        dset_name = core.name.dset_name(
+            'fmd','img_only', (crop_h,crop_w), (0,0,0), dset_dic)
+        core.io.dump_data_yaml(
+            Path(dset_root, 'DSET', dset_name), dset_dic)
+        
+        check_and_write_log(logging, dset_root)
         check_and_write_dw_log(logging)
 
     @staticmethod
-    def merge(module, out_dset_dir, *dset_yml_paths,
+    def crop_only(dset_root, dset_name,
+                  crops_root, select='random_select',
+                  note=None, logging=True):
+        '''
+        crop만 존재하는 폴더(crops_root)로부터
+        표준 데이터 형태(canonical form)의 crop_only 데이터셋 생성
+        crops_root 내부의 모든 crop은 크기(h,w)가 같아야 한다.
+        
+        결과는 
+        dset_root/DSET/{dset_name}.crop_only.h{crop_h}w{crop_w}.r_s.r_s.r_s.yml
+        로 저장된다.
+        
+        표준 데이터 형태는 브랜치 12-snet-dataset(PR 18)부터 적용된다.
+        식질머신에서 사용되는 대부분의 데이터를 표현할 수 있다.
+        
+        args:
+        dset_root: 데이터셋 폴더. DSET, OUTS, META 폴더를 포함함.
+        dset_name: 생성하는 데이터셋 이름. 
+        crops_root: 처리하려는 crop이 있는 폴더를 모두 포함하는 폴더.
+                    재귀적으로 모든 이미지를 처리한다.
+        select: R/D/T 선택 방법. select_yml을 넣으면 그걸 씀. 기본은 무작위 선택 (미구현)
+        note: 이 작업에 대한 추가적인 설명.
+        logging: False일 경우 로깅하지 않음
+        '''
+        assert_valid_dset_root(dset_root)
+        assert Path(crops_root).exists()
+        
+        dset_dic = crop_only.generate(crops_root, select)
+        dset_name = core.name.dset_name(
+            'fmd','crop_only',
+            (dset_dic['crop_h'], dset_dic['crop_w']), (0,0,0),
+            dset_dic)
+        print('Dump dataset yml...')
+        core.io.dump_data_yaml(
+            Path(dset_root, 'DSET', dset_name), dset_dic)
+        print('Done!')
+        
+        check_and_write_log(logging, dset_root)
+        check_and_write_dw_log(logging)
+
+
+    @staticmethod
+    def merge(module, dset_root, *dset_yml_paths,
               note=None, logging=True):
         '''
         데이터셋 여럿을 합친 데이터셋 생성
         
         args:
         module: 합쳐진 데이터셋의 이름과 기타 등등을 결정하는 모듈
-        out_dset_dir: 생성한 데이터셋 yml 파일이 RELS 아래에 저장되는 (DSET, META, OUTS)을 포함하는 폴더.
+        dset_root: 생성한 데이터셋 yml 파일이 RELS 아래에 저장되는 (DSET, META, OUTS)을 포함하는 폴더.
         *dset_yml_paths: 합치려는 데이터셋들의 yml 경로들
         note: 이 작업에 대한 추가적인 설명.
         logging: False일 경우 로깅하지 않음
         '''
-        assert_valid_dset_directory(out_dset_dir)
+        assert_valid_dset_root(dset_root)
         
         m = import_module(f'dataset.{module}', 'dataset')
-        m.merge(out_dset_dir, *dset_yml_paths)
+        m.merge(dset_root, *dset_yml_paths)
         
-        check_and_write_log(logging, out_dset_dir)
+        check_and_write_log(logging, dset_root)
         check_and_write_dw_log(logging)
                    
 class out(object):
     ''' Export dataset as learnable artifact(s) '''
+    
+    @staticmethod
+    def united_tfrecord(dset_path, out_path='',
+                        note=None, logging=True):
+        dset_path = Path(dset_path)
+        assert dset_path.exists()
+        dset_root = Path(core.path.dataset_root(dset_path))
+        assert_valid_dset_root(dset_root)
+
+        out_path = str(
+            Path(out_path).resolve() if out_path else
+            dset_root / 'OUTS' / f'{dset_path.stem}.tfrecord')
+        tfrec.gen_and_save(dset_path, out_path)
+        
+    @staticmethod
+    def flist(dset_path, out_dir='', note=None, logging=True):
+        '''
+        몇몇 모델에서 원하는 flist 파일 3개(R/D/T) 생성. 
+        현재는 crop_only만 지원.
+        
+        dset_path: crop_only 데이터셋 경로
+        out_dir: 없으면 dset_root 구해서 그 아래 /OUTS에 저장.
+        '''
+        dset_path = Path(dset_path)
+        assert dset_path.exists()
+        dset_root = Path(core.path.dataset_root(dset_path))
+        assert_valid_dset_root(dset_root)
+        
+        if not out_dir:
+            out_dir = dset_root / 'OUTS' 
+        with open(dset_path) as f:
+            dset = yaml.safe_load(f)
+
+        stem_parts = dset_path.stem.split('.')
+        test_rs = stem_parts[-1] # rs: revision_size
+        dev_rs = stem_parts[-2]
+        train_rs = stem_parts[-3]
+        except_rdt = '.'.join(stem_parts[:-3])
+        
+        train_flist_path = Path(
+            out_dir,
+            '.'.join([except_rdt, 'train', train_rs, 'flist']))
+        dev_flist_path = Path(
+            out_dir,
+            '.'.join([except_rdt, 'dev', dev_rs, 'flist']))
+        test_flist_path = Path(
+            out_dir,
+            '.'.join([except_rdt, 'test', test_rs, 'flist']))
+        
+        train_flist_path.write_text('\n'.join(dset['TRAIN']))
+        dev_flist_path.write_text('\n'.join(dset['DEV']))
+        test_flist_path.write_text('\n'.join(dset['TEST']))
+        
+        check_and_write_log(logging, dset_root)
+        check_and_write_dw_log(logging)
+        
     @staticmethod
     def text_ox(out_form, dset_path, out_path='',
                 note=None, logging=True):
@@ -269,16 +485,34 @@ class out(object):
             Path(out_path).resolve() if out_path else
             dset_root / 'OUTS' / f'{dp.stem}.{out_form}')
         if not out_path:
-            assert_valid_dset_directory(dset_root)
+            assert_valid_dset_root(dset_root)
 
         img_text_ox.output(dset_path, out_path)
 
         check_and_write_log(logging, dset_root)
         check_and_write_dw_log(logging)
         
+@staticmethod
+def history(log_path='dw.log.yml'):
+    '''
+    Print previously executed commands
+    
+    args:
+    log_path: log file path
+    '''
+    assert Path(log_path).exists()
+    with open(log_path) as f:
+        cmd_args_lst = yaml.safe_load(f)
+
+    #print(cmd_args_lst)
+    print('\n'.join([' '.join(['python', *args])
+                     for args in cmd_args_lst]))
+
 
 #----------------------------------------------------------------
 class interface(object):
     data = data
     dset = dset
     out = out
+    history = history
+    hist = history

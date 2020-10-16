@@ -4,7 +4,78 @@ import cli
 if __name__ == '__main__':
     fire.Fire(cli.interface)
 '''
+from pathlib import Path
+dset_root = str(Path('../SZMC_DSET/image_only').resolve())
+select_path = str(Path('../SZMC_DATA/').resolve())
+dset_name = 'fmd'
+import cli
+cli.dset.crops_only(
+    dset_root, dset_name,
+    '/home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/DATA/image.h256w256/',
+    select='/home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/RELS/old_select_rdt.yml')
 '''
+
+'''
+#out_dir = str(Path('../SZMC_DSET/image_only/OUTS/fmd.img_only.h256w256.0_6123.0_1000.0_500').resolve())
+#from out import flist
+#flist.gen_and_save(dset_path, out_dir)
+import cli
+cli.data.crops_dir(
+    '/home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/DATA/image',
+    512, 512, exist_ok=True)
+'''
+
+
+
+
+'''
+from dataset import img_only
+dic = img_only.read(out_path, compression_type='ZLIB')
+from pprint import pprint
+pprint(dic)
+# visual check # TODO: make it cli cmd
+
+import tensorflow as tf
+from utils import tensorflow_utils as tfu
+def datum(example, h=None, w=None):
+    img = example['img'];
+    #return tf.cast(tfu.decode_raw(img, (h,w,3), tf.uint8), tf.float32)
+    return tfu.decode_raw(img, (h,w,3), tf.uint8)
+
+import cv2
+print('wtf')
+#for example in dic['train']:
+#for example in dic['dev']:
+for example in dic['test']:
+    print('t')
+    img = datum(example, dic['crop_height'], dic['crop_width'])
+    print(img.shape)
+    cv2.imshow('img', img.numpy()); cv2.waitKey(0)
+    print('?')
+'''
+    
+'''
+import cli
+cli.out.tfrecord(dset_path, out_path)
+
+'''
+
+'''
+from pathlib import Path
+iroot = str(Path('../SZMC_DATA/clean_fmd_comics/DATA/image/').resolve())
+dset_root = str(Path('../SZMC_DSET/image_mask').resolve())
+fmd_select = str(Path('../SZMC_DATA/clean_fmd_comics/RELS/old_select_rdt.yml').resolve())
+
+import cli
+cli.dset.image_only(dset_root, 'fmd', iroot,
+                    select=fmd_select, has_text='x',
+                    crop_h=256, crop_w=256)
+'''
+'''
+#cli.dset.image_only(dset_root, iroot)
+cli.data.canonical_select_file('clean_fmd_comics', fmd_select)
+'''
+
 
 
 #img_dir = '../SZMC_DATA/v0data/m101/prev_images/'
