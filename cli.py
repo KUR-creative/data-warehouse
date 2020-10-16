@@ -493,10 +493,10 @@ class out(object):
         check_and_write_dw_log(logging)
         
 class script(object):
-    @staticmethod
-    def move_danbooru_crops(db2019dir):
-        from pprint import pprint
-        pprint(fu.children(db2019dir))
+    from scripts import move_danbooru_crops as _
+    move_danbooru_crops = staticmethod(_.main)
+    #from scripts import dummy as _ # It works well!
+    #dummy = staticmethod(_.main)
         
 def _history(log_path='dw.log.yml'):
     '''
