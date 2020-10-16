@@ -498,8 +498,7 @@ class script(object):
         from pprint import pprint
         pprint(fu.children(db2019dir))
         
-@staticmethod
-def history(log_path='dw.log.yml'):
+def _history(log_path='dw.log.yml'):
     '''
     Print previously executed commands
     
@@ -520,6 +519,6 @@ class interface(object):
     data = data
     dset = dset
     out = out
-    history = history
-    hist = history
-    script = script
+    history = staticmethod(_history)
+    hist = staticmethod(_history)
+    script =  script
