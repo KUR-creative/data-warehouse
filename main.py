@@ -2,6 +2,7 @@
 import fire
 import cli
 
+#cli.script.create_ids_dir('root', 2979164, 2); exit()
 #cli.script.move_danbooru_crops('/home/kur/dev/szmc/SZMC_DATA/all/DATA/raw/danbooru2019/'); exit()
 if __name__ == '__main__':
     fire.Fire(cli.interface)

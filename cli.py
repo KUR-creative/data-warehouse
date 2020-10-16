@@ -495,8 +495,9 @@ class out(object):
 class script(object):
     from scripts import move_danbooru_crops as _
     move_danbooru_crops = staticmethod(_.main)
-    #from scripts import dummy as _ # It works well!
-    #dummy = staticmethod(_.main)
+    from scripts import create_ids_dir as _
+    create_ids_dir = staticmethod(_.main)
+
         
 def _history(log_path='dw.log.yml'):
     '''
