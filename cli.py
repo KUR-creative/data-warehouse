@@ -246,6 +246,30 @@ class data(object):
         check_and_write_log(logging, data_source)
         check_and_write_dw_log(logging)
         
+    @staticmethod
+    def add_raw(src_path, raw_dir, conn_str, id_dir_n_digits=3,
+                note=None, logging=True):
+        '''
+        src_path(경로 리스트 파일or폴더 경로)에 존재하는 이미지를 
+        raw_dir로 옮기면서 id를 부여, conn으로 연결되는 DB
+        (혹은 데이터 저장소)에 저장한다.
+        
+        args:
+        src_path: can be direcotry path or file that contaions
+        image paths line by line.
+        dst_dir: is directory path.
+        conn_str: for db connection
+        '''
+        import data # entity.data
+        data.raw.ready_to_add(src_path, raw_dir, conn_str,
+                              id_dir_n_digits)
+        data.raw.add(src_path, raw_dir, conn_str)
+        
+        data_source = core.path.data_source(src_path)
+        if data_source:
+            check_and_write_log(logging, data_source)
+        check_and_write_dw_log(logging)
+        
 class dset(object):
     ''' Generate and Save dataset from data-sources '''
 

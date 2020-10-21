@@ -2,6 +2,9 @@
 import fire
 import cli
 
+#cli.data.add_raw('/run/media/kur/DATA1/all/DATA/test/CHN/001.jpg', '/run/media/kur/DATA1/all/DATA/test/raw', 'test2')
+#cli.data.add_raw('/run/media/kur/DATA1/all/DATA/test/CHN', '/run/media/kur/DATA1/all/DATA/test/raw', 'test2')
+#exit()
 #cli.script.create_ids_dir('root', 2979164, 2); exit()
 #cli.script.move_danbooru_crops('/home/kur/dev/szmc/SZMC_DATA/all/DATA/raw/danbooru2019/'); exit()
 if __name__ == '__main__':

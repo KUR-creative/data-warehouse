@@ -1,17 +1,18 @@
 from pathlib import Path
 
-def main(root, max_id, n_digits):
+import core
+
+def main(parent, max_id, n_digits):
     ''' 
-    main('./root', 12340, 3); then Creates dirs:
-    ./root/000
-    ./root/001
+    main('./parent', 12340, 3); then Creates dirs:
+    ./parent/000
+    ./parent/001
     ...
-    ./root/999
+    ./parent/999
     '''
     limit = 10**n_digits
     assert max_id >= limit
 
-    dir_paths =[Path(root, f'%0{n_digits}d' % i)
-                for i in range(0, limit)]
+    dir_paths = core.path.id_dirs(parent, n_digits)
     for dir_path in dir_paths:
-        dir_path.mkdir(parents=True)
+        Path(dir_path).mkdir(parents=True)

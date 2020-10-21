@@ -47,3 +47,7 @@ pprint(data_source(img_dir))
 def crop(img_path, y, x, fmt='_y{y}x{x}'):
     new_stem = fu.stem(img_path) + fmt.format(y=y, x=x)
     return fu.set_stem(img_path, new_stem)
+
+def id_dirs(parent, n_digits=3):
+    return [str(Path(root, f'%0{n_digits}d' % i))
+            for i in range(0, 10**n_digits)]
