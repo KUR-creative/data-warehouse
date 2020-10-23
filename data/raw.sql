@@ -35,6 +35,10 @@ insert into id_path values (:id, :src, :raw);
 insert into no_care_file values (:path);
 -- name: insert_file_type!
 insert into file_type values (:id, :type);
+-- name: insert_mask!
+insert into mask values(:id, :path, :type);
+-- name: insert_image!
+insert into image values(:id, :path, :type);
 
 -- name: id_path
 select * from id_path;
@@ -62,4 +66,4 @@ FROM   id_path
 WHERE  done.id IS NULL 
        AND ( file_type.type = 'image/jpeg' 
               OR file_type.type = 'image/png' ) 
-ORDER  BY Random(); 
+ORDER  BY Random() limit 10; 

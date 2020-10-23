@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 import shutil
+import subprocess as sp
 
 import aiosql
 import filetype
@@ -165,28 +166,53 @@ def run_szmc_to_raws(conn_str,
     Get random raw images that don't have corresponding 
     masks and rmtxt images. Generate masks and rmtxts.
     '''
-    
+    # Get raw paths
     with pg.connect(dbname=conn_str) as conn:
         Q.create(conn) # Ensure table exists.
         raw_paths = [r[0] for r in
                      Q.random_raws_without_mask_or_img(conn)]
-
-    to_mask = fu.replace1('raw', 'mask') 
-    to_rmtxt = fu.replace1('raw', 'rmtxt') 
+    # Make dst paths
+    to_mask = fu.replace1('raw', mask_dir_name) 
+    to_rmtxt = fu.replace1('raw', rmtxt_dir_name) 
+    ids = [int(fu.stem(p)) for p in raw_paths]
     mask_paths = [to_mask(Path(p).with_suffix('.png'))
                   for p in raw_paths]
     rmtxt_paths = [to_rmtxt(p) for p in raw_paths]
-    inps = [f'{raw} {mask} {rmtxt}\n' for raw, mask, rmtxt
-            in zip(raw_paths, mask_paths, rmtxt_paths)]
+    
+    # Run dockerized szmc
+    cmd =('docker run '
+        + '-a stdin -a stdout -a stderr '
+        + '-v /run/media/kur/DATA1/all/:/run/media/kur/DATA1/all '
+        + '--runtime=nvidia --ipc=host --rm '
+        + '-i szmc:cli-v0 python server.py').split()
+    proc = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE)
+    
+    for id, raw, mask, rmtxt in tqdm(
+            zip(ids, raw_paths, mask_paths, rmtxt_paths),
+            total=len(raw_paths)):
+        # Create directory 
+        Path(mask).parent.mkdir(parents=True, exist_ok=True)
+        Path(rmtxt).parent.mkdir(parents=True, exist_ok=True)
 
-    from pprint import pprint
-    pprint(raw_paths)
-    pprint(mask_paths)
-    pprint(rmtxt_paths)
-    pprint(inps)
-    '''
-    print([r for r in raw_paths if fu.stem(r[0]) == '0'])
-    print([r for r in raw_paths if fu.stem(r[0]) == '112'])
-    print([r for r in raw_paths if fu.stem(r[0]) == '3'])
-    print([r for r in raw_paths if fu.stem(r[0]) == '13'])
-    '''
+        # Call dockerized szmc
+        inp = f'{raw} {mask} {rmtxt}\n'
+        proc.stdin.write(inp.encode('utf-8'))
+        proc.stdin.flush()
+        
+        # Get ret and save metadata to DB
+        ret = ''
+        try:
+            ret = proc.stdout.readline()
+        except Exception as e:
+            print(e)
+            # Rerun proc
+            #proc = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE)
+        finally:
+            if ret == b'Success!\n':
+                mask_row = {'id':id, 'path':mask, 'type':'snet.v0'}
+                img_row = {'id':id, 'path':rmtxt, 'type':'cnet.v0'}
+                with pg.connect(dbname=conn_str) as conn:
+                    Q.insert_mask(conn, **mask_row)
+                    Q.insert_image(conn, **img_row)
+
+    proc.stdin.write('exit the server\n'.encode('utf-8'))
