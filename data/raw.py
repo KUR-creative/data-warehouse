@@ -168,9 +168,25 @@ def run_szmc_to_raws(conn_str,
     
     with pg.connect(dbname=conn_str) as conn:
         Q.create(conn) # Ensure table exists.
-        raw_paths = Q.random_raws_without_mask_or_img(conn)
+        raw_paths = [r[0] for r in
+                     Q.random_raws_without_mask_or_img(conn)]
 
+    to_mask = fu.replace1('raw', 'mask') 
+    to_rmtxt = fu.replace1('raw', 'rmtxt') 
+    mask_paths = [to_mask(Path(p).with_suffix('.png'))
+                  for p in raw_paths]
+    rmtxt_paths = [to_rmtxt(p) for p in raw_paths]
+    inps = [f'{raw} {mask} {rmtxt}\n' for raw, mask, rmtxt
+            in zip(raw_paths, mask_paths, rmtxt_paths)]
+
+    from pprint import pprint
+    pprint(raw_paths)
+    pprint(mask_paths)
+    pprint(rmtxt_paths)
+    pprint(inps)
+    '''
     print([r for r in raw_paths if fu.stem(r[0]) == '0'])
     print([r for r in raw_paths if fu.stem(r[0]) == '112'])
     print([r for r in raw_paths if fu.stem(r[0]) == '3'])
     print([r for r in raw_paths if fu.stem(r[0]) == '13'])
+    '''
