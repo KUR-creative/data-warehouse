@@ -75,3 +75,25 @@
   /home/kur/dev/szmc/SZMC_DATA/clean_fmd_comics/RELS/old_select_rdt.yml, '#c9710ecb1861eff4f441458de7dd457b64e8ae29']
 - [main.py, out, flist, /home/kur/dev/szmc/SZMC_DSET//image_only/DSET/fmd.crop_only.h256w256.0_6123.0_1000.0_500.yml,
   '#0318cfde384b77d2e1a5bb88a1e84e1621fafced']
+- [main.py, data, add_raw, /run/media/kur/DATA1/all/DATA/src/CHN/, /run/media/kur/DATA1/all/DATA/raw,
+  dw, '#76f9c70c6118434f45ba726d6d31b407398fbf04']
+- [main.py, data, add_raw, /run/media/kur/DATA1/all/DATA/src/fmd_wbtoon+cartoon/, /run/media/kur/DATA1/all/DATA/raw,
+  dw, '#76f9c70c6118434f45ba726d6d31b407398fbf04']
+- [main.py, data, add_raw, ../SZMC_DATA/all/DATA/test/CHN, ../SZMC_DATA/all/DATA/test/raw,
+  test2, '#76f9c70c6118434f45ba726d6d31b407398fbf04']
+- [main.py, data, add_raw, /run/media/kur/DATA1/all/DATA/src/japan_raws/, /run/media/kur/DATA1/all/DATA/raw,
+  dw, '#76f9c70c6118434f45ba726d6d31b407398fbf04']
+- [main.py, data, add_raw, /run/media/kur/DATA1/all/RELS/src.path.arr, /run/media/kur/DATA1/all/DATA/raw,
+  test2, '#76f9c70c6118434f45ba726d6d31b407398fbf04']
+- [main.py, data, add_raw, /run/media/kur/DATA1/all/RELS/src.path.arr, /run/media/kur/DATA1/all/DATA/raw,
+  test2, '#76f9c70c6118434f45ba726d6d31b407398fbf04']
+- [main.py, data, add_raw, /run/media/kur/DATA1/all/RELS/src.path.arr, /run/media/kur/DATA1/all/DATA/raw,
+  test2, '#76f9c70c6118434f45ba726d6d31b407398fbf04']
+- [main.py, data, add_raw, /run/media/kur/DATA1/all/RELS/src.path.arr, /run/media/kur/DATA1/all/DATA/ttt,
+  test2, '#76f9c70c6118434f45ba726d6d31b407398fbf04']
+- [main.py, data, add_raw, /run/media/kur/DATA1/all/RELS/src.path.arr, /run/media/kur/DATA1/all/DATA/ttt,
+  test2, '#76f9c70c6118434f45ba726d6d31b407398fbf04']
+- [main.py, data, add_raw, /run/media/kur/DATA1/all/RELS/src.path.arr, /run/media/kur/DATA1/all/DATA/raw,
+  test2, '#76f9c70c6118434f45ba726d6d31b407398fbf04']
+- [main.py, data, add_raw, /run/media/kur/DATA1/all/RELS/src.path.arr, /run/media/kur/DATA1/all/DATA/raw,
+  dw, '#76f9c70c6118434f45ba726d6d31b407398fbf04']

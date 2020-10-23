@@ -14,10 +14,16 @@ def assert_img_path(path):
         f'filetype.guess({path}) = {kind} != image/*'
     return path
 
+def type_str(file_type):
+    return '' if file_type is None else file_type.mime
+def is_img_type(type): # type from filetype
+    return(type is not None
+       and type.mime.split('/')[0] == 'image')
+
 def is_img_path(path):
     kind = filetype.guess(str(path))
-    return(kind is not None
-       and kind.mime.split('/')[0] == 'image')
+    return is_img_type(kind)
+    #return(kind is not None and kind.mime.split('/')[0] == 'image')
 
 def img_hw(path):
     w, h = imagesize.get(assert_img_path(path))

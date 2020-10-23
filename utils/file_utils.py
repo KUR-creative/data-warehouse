@@ -27,6 +27,14 @@ def descendants(root_dirpath):
             fpaths.append(str(path))
     return fpaths
 
+def descendantseq(root_dirpath):
+    ''' Return descendants file path list of `root_dirpath` ''' 
+    fpaths = []
+    it = os.walk(root_dirpath)
+    for root,dirs,files in it:
+        for path in map(lambda name:PurePosixPath(root) / name,files):
+            yield str(path)
+
 #---------------------------------------------------------------
 def copy_dirtree(src, dst, **kwargs):
     ''' 
@@ -87,7 +95,7 @@ def select(at, path=None):
         return parts[at]
 
 def extension(path):
-    return Path(path).suffix.replace('.','',1)
+    return Path(path).suffix[1:]
 
 def stem(path): return Path(path).stem
 def name(path): return Path(path).name
@@ -125,3 +133,9 @@ def read_text(path, encoding=None, errors=None):
         #print('path->',path)
     return Path(path).read_text(
         encoding=encoding, errors=errors)
+
+#---------------------------------------------------------------
+import filetype
+def file_type_str(path):
+    file_type = filetype.guess(str(path))
+    return '' if file_type is None else file_type.mime
