@@ -66,4 +66,4 @@ FROM   id_path
 WHERE  done.id IS NULL 
        AND ( file_type.type = 'image/jpeg' 
               OR file_type.type = 'image/png' ) 
-ORDER  BY Random() limit 10; 
+ORDER  BY Random(); 

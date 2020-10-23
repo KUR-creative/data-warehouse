@@ -167,17 +167,18 @@ def run_szmc_to_raws(conn_str,
     masks and rmtxt images. Generate masks and rmtxts.
     '''
     # Get raw paths
+    print('Fetch raw paths from db...')
     with pg.connect(dbname=conn_str) as conn:
         Q.create(conn) # Ensure table exists.
-        raw_paths = [r[0] for r in
+        raw_paths = [row[0] for row in
                      Q.random_raws_without_mask_or_img(conn)]
     # Make dst paths
     to_mask = fu.replace1('raw', mask_dir_name) 
     to_rmtxt = fu.replace1('raw', rmtxt_dir_name) 
-    ids = [int(fu.stem(p)) for p in raw_paths]
-    mask_paths = [to_mask(Path(p).with_suffix('.png'))
-                  for p in raw_paths]
-    rmtxt_paths = [to_rmtxt(p) for p in raw_paths]
+    idseq = (int(fu.stem(p)) for p in raw_paths)
+    mask_pathseq = (to_mask(Path(p).with_suffix('.png'))
+                    for p in raw_paths)
+    rmtxt_pathseq = (to_rmtxt(p) for p in raw_paths)
     
     # Run dockerized szmc
     cmd =('docker run '
@@ -187,8 +188,9 @@ def run_szmc_to_raws(conn_str,
         + '-i szmc:cli-v0 python server.py').split()
     proc = sp.Popen(cmd, stdin=sp.PIPE, stdout=sp.PIPE)
     
+    print('Generate mask & rmtxt using dockerized szmc')
     for id, raw, mask, rmtxt in tqdm(
-            zip(ids, raw_paths, mask_paths, rmtxt_paths),
+            zip(idseq, raw_paths, mask_pathseq, rmtxt_pathseq),
             total=len(raw_paths)):
         # Create directory 
         Path(mask).parent.mkdir(parents=True, exist_ok=True)
