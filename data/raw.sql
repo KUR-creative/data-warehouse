@@ -32,3 +32,8 @@ select * from id_path;
 select src, raw from id_path;
 -- name: max_id$
 select max(id) from id_path;
+
+-- name: unknown_file_type_raws
+select id_path.id, raw from id_path
+left join file_type on id_path.id = file_type.id
+where file_type.id is NULL order by id_path.id;

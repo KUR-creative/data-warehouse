@@ -135,5 +135,25 @@ def add(src_path, dst_dir, conn_str):
     if n_moved == 0 or n_moved == len(rows):
         print('May be all images moved')
 
-def relocate(conn_str):
-    ''' move images from 'raw' to 'src' described in db '''
+def know_raws_file_type(conn_str):
+    ''' 
+    Add file type of image in raw 
+    (only for image that has unknown type)
+    '''
+    with pg.connect(dbname=conn_str) as conn:
+        rows = Q.unkown_file_type_raws(conn)
+    from pprint import pprint
+
+    # Save to DB
+    types = list(tqdm(
+        (fu.file_type_str(raw) for _,raw in rows),
+        total=len(rows), desc='Get types'))
+    
+    # temporary cacheing (remove!)
+    Path('raw.id_type.json').write_text(json.dumps(types))
+    
+    with pg.connect(dbname=conn_str) as conn:
+        for (id, path), type in tqdm(zip(rows, types),
+                                     total=len(rows),
+                                     desc='insert'):
+            Q.insert_file_type(conn, id=id, type=type)

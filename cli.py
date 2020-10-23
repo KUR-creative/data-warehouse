@@ -269,6 +269,15 @@ class data(object):
         if data_source:
             check_and_write_log(logging, data_source)
         check_and_write_dw_log(logging)
+
+    @staticmethod
+    def know_raws_file_type(conn_str, note=None, logging=True):
+        '''
+        DB에 저장된 raw 중에서 file_type이 빠져 있는 걸 채운다.
+        '''
+        import data # entity.data
+        data.raw.know_raws_file_type(conn_str)
+
         
 class dset(object):
     ''' Generate and Save dataset from data-sources '''
