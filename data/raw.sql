@@ -6,7 +6,17 @@ CREATE TABLE IF NOT EXISTS id_path (
 );
 CREATE TABLE IF NOT EXISTS file_type (
     id       INTEGER       PRIMARY KEY REFERENCES id_path(id),
-    type     TEXT          
+    type     TEXT          NOT NULL
+);
+CREATE TABLE IF NOT EXISTS mask ( --- mask generated from id
+    id       INTEGER       PRIMARY KEY REFERENCES id_path(id),
+    path     TEXT          NOT NULL,
+    type     TEXT          NOT NULL  --- rgb, v0, ...
+);
+CREATE TABLE IF NOT EXISTS image ( --- image generated from id
+    id       INTEGER       PRIMARY KEY REFERENCES id_path(id),
+    path     TEXT          NOT NULL,
+    type     TEXT          NOT NULL  --- rmtxt-v0, ...
 );
 CREATE TABLE IF NOT EXISTS no_care_file (
     path     TEXT          PRIMARY KEY
@@ -37,3 +47,19 @@ select max(id) from id_path;
 select id_path.id, raw from id_path
 left join file_type on id_path.id = file_type.id
 where file_type.id is NULL order by id_path.id;
+
+-- name: random_raws_without_mask_or_img
+SELECT raw 
+FROM   id_path 
+       LEFT OUTER JOIN (SELECT id 
+                        FROM   mask 
+                        UNION 
+                        SELECT id 
+                        FROM   image) AS done 
+                    ON id_path.id = done.id 
+       JOIN file_type 
+         ON id_path.id = file_type.id 
+WHERE  done.id IS NULL 
+       AND ( file_type.type = 'image/jpeg' 
+              OR file_type.type = 'image/png' ) 
+ORDER  BY Random(); 

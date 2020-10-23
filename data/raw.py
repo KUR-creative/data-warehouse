@@ -157,3 +157,20 @@ def know_raws_file_type(conn_str):
                                      total=len(rows),
                                      desc='insert'):
             Q.insert_file_type(conn, id=id, type=type)
+        
+def run_szmc_to_raws(conn_str,
+                     mask_dir_name='mask',
+                     rmtxt_dir_name='rmtxt'):
+    '''
+    Get random raw images that don't have corresponding 
+    masks and rmtxt images. Generate masks and rmtxts.
+    '''
+    
+    with pg.connect(dbname=conn_str) as conn:
+        Q.create(conn) # Ensure table exists.
+        raw_paths = Q.random_raws_without_mask_or_img(conn)
+
+    print([r for r in raw_paths if fu.stem(r[0]) == '0'])
+    print([r for r in raw_paths if fu.stem(r[0]) == '112'])
+    print([r for r in raw_paths if fu.stem(r[0]) == '3'])
+    print([r for r in raw_paths if fu.stem(r[0]) == '13'])
