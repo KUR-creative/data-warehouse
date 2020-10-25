@@ -22,6 +22,16 @@ CREATE TABLE IF NOT EXISTS no_care_file (
     path     TEXT          PRIMARY KEY
 );
 
+CREATE TABLE IF NOT EXISTS shape ( --- image generated from id
+    id       INTEGER       NOT NULL REFERENCES id_path(id),
+    type     TEXT          NOT NULL,  --- rmtxt-v0, ...
+    height   INTEGER       NOT NULL CHECK 0 < height,
+    width    INTEGER       NOT NULL CHECK 0 < width,
+    depth    INTEGER       NOT NULL CHECK 0 < depth
+    PRIMARY KEY(id, type)
+);
+
+---------------------------------------------------------------
 -- name: insert_id_path_rows*!
 insert into id_path values (:id, :src, :raw);
 -- name: insert_no_care_files*!
@@ -40,6 +50,7 @@ insert into mask values(:id, :path, :type);
 -- name: insert_image!
 insert into image values(:id, :path, :type);
 
+---------------------------------------------------------------
 -- name: id_path
 select * from id_path;
 -- name: src_raw
