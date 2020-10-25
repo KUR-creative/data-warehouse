@@ -278,6 +278,16 @@ class data(object):
         import data # entity.data
         data.raw.know_raws_file_type(conn_str)
 
+    @staticmethod
+    def run_szmc_to_raws(conn_str, mask_dir_name, rmtxt_dir_name,
+                         note=None, logging=True):
+        '''
+        Get random raw images that don't have corresponding 
+        masks and rmtxt images. Generate masks and rmtxts.
+        '''
+        import data # entity.data
+        data.raw.run_szmc_to_raws(
+            conn_str, mask_dir_name, rmtxt_dir_name)
         
 class dset(object):
     ''' Generate and Save dataset from data-sources '''
