@@ -25,9 +25,9 @@ CREATE TABLE IF NOT EXISTS no_care_file (
 CREATE TABLE IF NOT EXISTS shape ( --- image generated from id
     id       INTEGER       NOT NULL REFERENCES id_path(id),
     type     TEXT          NOT NULL,  --- rmtxt-v0, ...
-    height   INTEGER       NOT NULL CHECK 0 < height,
-    width    INTEGER       NOT NULL CHECK 0 < width,
-    depth    INTEGER       NOT NULL CHECK 0 < depth
+    height   INTEGER       NOT NULL CHECK(0 < height),
+    width    INTEGER       NOT NULL CHECK(0 < width),
+    depth    INTEGER       NOT NULL CHECK(0 < depth),
     PRIMARY KEY(id, type)
 );
 
@@ -57,6 +57,13 @@ select * from id_path;
 select src, raw from id_path;
 -- name: max_id$
 select max(id) from id_path;
+
+-- name: rmtxt_mask_paths_shuffled
+SELECT mask.path, image.path
+FROM   mask JOIN image ON mask.id = image.id
+WHERE  mask.type = :mask_type
+  AND  image.type = :image_type
+ORDER  BY Random();
 
 -- name: unknown_file_type_raws
 select id_path.id, raw from id_path

@@ -3,7 +3,9 @@ from pathlib import Path
 import shutil
 import subprocess as sp
 
+import numpy as np
 import aiosql
+import cv2
 import filetype
 import funcy as F
 import psycopg2 as pg
@@ -218,3 +220,38 @@ def run_szmc_to_raws(conn_str,
                     Q.insert_image(conn, **img_row)
 
     proc.stdin.write('exit the server\n'.encode('utf-8'))
+
+def gen_img_for_via_annotator(
+        conn_str, inp_dir, mask_dir, out_dir):
+    from pprint import pprint
+    with pg.connect(dbname=conn_str) as conn:
+        Q.create(conn) # Ensure table exists.
+
+        #lst = Q.rmtxt_mask_paths_shuffled(conn, type='cnet.v0')
+        mask_paths, rmtxt_paths = fp.unzip(
+            Q.rmtxt_mask_paths_shuffled(
+                conn, mask_type='snet.v0', image_type='cnet.v0'))
+
+    to_raw = fu.replace1(inp_dir, 'raw')
+    to_out = fu.replace1(inp_dir, out_dir)
+    raw_paths = [to_raw(p) for p in rmtxt_paths]
+    out_paths = [to_out(p) for p in rmtxt_paths]
+    
+    rawseq = (cv2.imread(p) for p in raw_paths)
+    maskseq = (cv2.imread(p)[:,:,2] for p in mask_paths)
+    changedseq = (r * np.expand_dims(m.astype(bool), axis=-1)
+                  for r, m in zip(rawseq, maskseq))
+    rmtxtseq = (cv2.imread(p) for p in rmtxt_paths)
+    
+    for changed, rmtxt, path in tqdm(
+            zip(changedseq, rmtxtseq, out_paths),
+            total=len(out_paths)):
+        h,w = rmtxt.shape[:2]
+        concatenated = np.concatenate(
+            [rmtxt, changed], axis = 0 if h < w else 1)
+        '''
+        cv2.imshow('rm', concatenated)
+        cv2.waitKey(0)
+        '''
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        cv2.imwrite(path, concatenated)

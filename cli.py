@@ -288,6 +288,16 @@ class data(object):
         import data # entity.data
         data.raw.run_szmc_to_raws(
             conn_str, mask_dir_name, rmtxt_dir_name)
+
+    @staticmethod
+    def gen_img_for_via_annotator(conn_str,
+                                  inp_dir='rmtxt-v0',
+                                  mask_dir='mask-v0',
+                                  out_dir='via-anno-v0',
+                                  note=None, logging=True):
+        import data # entity.data
+        data.raw.gen_img_for_via_annotator(
+            conn_str, inp_dir, mask_dir, out_dir)
         
 class dset(object):
     ''' Generate and Save dataset from data-sources '''
