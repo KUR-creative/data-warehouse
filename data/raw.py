@@ -246,6 +246,8 @@ def gen_img_for_via_annotator(
     for changed, rmtxt, path in tqdm(
             zip(changedseq, rmtxtseq, out_paths),
             total=len(out_paths)):
+        if Path(path).exists():
+            continue
         h,w = rmtxt.shape[:2]
         concatenated = np.concatenate(
             [rmtxt, changed], axis = 0 if h < w else 1)
